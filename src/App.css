@@ -17,3 +17,27 @@
 .btn{
   background-color: #242424;
 }
+
+@layer utilities {
+  .scrl::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrl::-webkit-scrollbar-thumb {
+    background-color: #fff;
+    border-radius: 10px;
+  }
+  
+  .scrl::-webkit-scrollbar-track {
+    background: rgba(61, 61, 61,1);
+    border-radius: 10px;
+  }
+  
+  .scrl::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .list {
+    @apply flex flex-row gap-4 text-white h-10 pb-1 px-5 py-2.5;
+  }
+}

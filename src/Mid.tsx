@@ -1,8 +1,14 @@
 import React from 'react'
 
+
 function Mid() {
     return(
-        <h1 className="text-white"> Mid Pane</h1>
+        <>
+        {/* folder name */}
+            <div className='w-75 h-7 py-7.5 px-5 border-2 border-blue-950'>
+                {}
+            </div>
+        </>
     )
 }
 
