@@ -21,7 +21,6 @@ function Left() {
 
 
   //folder
-  const folder = [{id:"1",name:"folder1"},{id:"2",name:"folder1"},{id:"3",name:"folder1"},{id:"4",name:"folder1"},{id:"5",name:"folder1"},{id:"6",name:"folder1"},{id:"7",name:"folder1"},{id:"8",name:"folder1"}]
 
 
   const [isSearch, setIsSearch] = useState<boolean>(false);

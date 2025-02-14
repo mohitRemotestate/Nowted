@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import useFetchNotes from "./Hooks/useFetchNotes";
 import { NavLink, useParams } from "react-router-dom";
 
-
+interface Folder {
+    id: number;
+    name: string;
+  }
+  
+  interface FolderData {
+    folders: Folder[];
+  }
+  
 
 function Mid() {
 
     const {folderId} =  useParams();
 
-        // console.log(folderId)
-    
     const {data,loading,error} = useFetchNotes("notes",{folderId: folderId})
     
-    console.log(data)
     if(loading) return <h1>Loading...</h1>
-
-    return (
+    if(data) return (
         <>
         <div className="h-22 py-7.5 px-5">
             {/* folder name */}
                 <div className="w-75 h-7  border- ">
                     {/* Display the folder name here */}
-                    <p className='text-white font-sens  font-semibold h-7 text-2xl '>{data.folder}</p>
+                    <p className='text-white font-sens  font-semibold h-7 text-2xl '>{}</p>
                 </div>
            
 
@@ -47,6 +51,8 @@ function Mid() {
         </div>
         </>
     );
+
+    if(error) return <>{error}</>
 }
 
 export default Mid;
