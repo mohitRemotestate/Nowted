@@ -1,9 +1,14 @@
 import React from 'react'
+import Default from './Components/Right/Default.tsx'
+import Notepad from './Components/Right/Notepad.tsx'
+
+
 
 
 function Right() {
     return(<>
-        <h1 className="text-white"> Right Pane</h1>
+        {/* <Default /> */}
+        <Notepad />
 
     </>
     )
