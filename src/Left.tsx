@@ -10,24 +10,27 @@ import Data from './Components/Data/Data.tsx'
 import './App.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { redirectDocument } from 'react-router-dom';
-
-
-
-
+import { NavLink, redirectDocument, useParams } from 'react-router-dom';
+import usePostRequest from './Hooks/usePost.tsx';
 
 
 function Left() {
-
-
-  //folder
-
-
+  const {folderId} = useParams();
   const [isSearch, setIsSearch] = useState<boolean>(false);
   
+  function handleClick(e){
+    if(folderId){ 
+      // <NavLink 
+      // to={`/folder/${folderId}/newNote`}
+      // ></NavLink>
+    }
+    else{
+      alert("choose any folder first")
+    }
+  }
 
   return (
-    <>     
+    <div className='flex flex-col h-full'>     
 
     <div className="flex justify-between px-5 py-7.5 ">
       <img src={logo} />
@@ -36,17 +39,22 @@ function Left() {
 
     {/* search and new file  */}
     <div className="px-5 " id='isSearch'>
-      {isSearch?
-      <div className='border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10'>
-          <div>
-            <img src={srch}/>
-          </div>
-        
-        <input type='input' className='border-white rounded-xs text-white ' placeholder="Search note"/>
-      </div>
-      :<button type="button" className=" border-natural-800 rounded-xs btn text-white w-full h-10 font-sans font-semibold ">+ New Note</button> }
+      
+  {isSearch?
+  (<div className='border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10 w-full'>
+    <div>
+      <img src={srch}/>
     </div>
-
+    <input type='input' className='border-white rounded-xs text-white w-full' placeholder="Search note"/>
+  </div>)
+  :<button 
+  type="button" 
+  onClick={handleClick}
+  className=" border-natural-800 rounded-xs btn text-white w-full h-10 font-sans font-semibold ">
+    + New Note
+  </button> }
+</div>
+    <div className='flex flex-col'>
     {/* recents */}
         <Recent />  
     
@@ -57,8 +65,12 @@ function Left() {
 
     {/* more */}
         <More />
-    </>
+    </div>
+    </div>
   );  
 }
 
 export default Left;
+
+
+

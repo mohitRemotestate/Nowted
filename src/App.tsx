@@ -9,7 +9,7 @@ const App =()=>{
 
     return (
         <div className="flex flex-row">
-                        <div className="w-1/5 h-screen bg-left">
+                        <div className="flex flex-col w-1/5 h-screen bg-left">
                             <Left />
                         </div>
                         <div className="w-1/4 h-screen bg-mid">

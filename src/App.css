@@ -5,7 +5,12 @@
 }
 
 .active {
-    background-color: red;
+    background-color: #312EB5;
+}
+
+.ele:hover {
+    background-color: white;
+    opacity: 0.7;
 }
 
 .bg-left {
