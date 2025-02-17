@@ -7,10 +7,11 @@ import { NavLink,useParams } from 'react-router-dom';
 
 function Recent () {
 
-  const {data, loading, error} = useFetchNotes("notes/recent");
+  const recent = useFetchNotes();
+  recent.fetchData("notes/recent");
   const { folderId, noteId} = useParams();
   
-  if(loading) return (
+  if(recent.loading) return (
     <>
       <div className='py-7.5 h-54'>
       <div className='px-5 font-semibold text-white h-6.5 pb-2'>Recents</div>
@@ -19,11 +20,11 @@ function Recent () {
     </>
 )
 
-    if(data)return(
-        (data && <div className='py-7.5 h-54'>
+    if(recent.data)return(
+        (recent.data && <div className='py-7.5 h-54'>
       <div className='px-5 font-semibold text-white h-6.5 pb-2'>Recents</div>
       <ul>
-        { data.recentNotes.map((rec:any)=>(
+        { recent.data.recentNotes.map((rec:any)=>(
           <NavLink 
           to={`/folder/${rec.folder.id}/note/${rec.id}`}
           key={rec.id} 
@@ -35,7 +36,7 @@ function Recent () {
       </div>  )
     )
 
-  if(error) return <>{error}</>
+  if(recent.error) return <>{recent.error}</>
 
 
 }

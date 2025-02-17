@@ -12,9 +12,6 @@ import NewNoteView from './Components/Right/NewNoteView.tsx'
 function Right() {
     const{noteId , folderId} = useParams();
 
-    const {data, loading, error} = useFetchNotes(`notes/${noteId}`)
-
-
 if(noteId == "newnote"){ 
     return <NewNoteView />}
 else if(noteId && (folderId != "trash")){

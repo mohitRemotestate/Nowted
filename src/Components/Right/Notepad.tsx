@@ -10,14 +10,15 @@ import useDelete from "../../Hooks/useDelete.tsx";
 
 function Notepad() {
     const { noteId , folderId} = useParams();
-    const { data, loading, error } = useFetchNotes(`notes/${noteId}`);
+    const singleNote = useFetchNotes();
+    singleNote.fetchSingleNote(`${noteId}`);
     const Patch = usePatch()
     const Delete = useDelete();
 //data, loading, error
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
     const [isArchived,setisArchived] = useState(false)
-    const [isFavorite, setIsFavourite] = useState(false)
+    const [isFavorite, setIsfavorite] = useState(false)
     const [popupVisible, setPopupVisible] = useState(false);
     const [isEditable, setIsEditable] = useState(false)
     const navigate = useNavigate();
@@ -61,7 +62,7 @@ function Notepad() {
                         })
                         break;
                     case 'Favorite':
-                        setIsFavourite(!isFavorite);
+                        setIsfavorite(!isFavorite);
                         Patch.patchData(`notes/${data.note.id}`, {
                             title,
                             content,

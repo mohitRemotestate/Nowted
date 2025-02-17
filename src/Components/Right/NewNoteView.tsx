@@ -14,7 +14,8 @@ function NewNoteView() {
     const [content, setContent] = useState("Enter content here");
     const [isEditable, setIsEditable] = useState(false);
     const {postData,data,error} = usePostRequest();
-    const folderData = useFetchNotes('folders') //just for folder name
+    const folderData = useFetchNotes() //just for folder name
+    folderData.fetchData("folders");
     const [folderName, setFolderName] = useState('');
     const navigate = useNavigate();
 

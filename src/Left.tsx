@@ -20,7 +20,7 @@ function Left() {
   const navigate = useNavigate();
   
   function handleClick() {
-    if (folderId && !["trash", "favourite", "archived"].includes(folderId)){
+    if (folderId && !["trash", "favorite", "archived"].includes(folderId)){
       navigate(`/folder/${folderId}/note/newnote`);
     } else {
       alert("Choose any folder first");

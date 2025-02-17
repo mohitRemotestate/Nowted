@@ -10,7 +10,8 @@ import useDelete from '../../Hooks/useDelete';
 function Folders() {
   
   const { folderId } = useParams();
-  const folder = useFetchNotes(`folders`);
+  const folder = useFetchNotes();
+  folder.fetchData('folders')
   const [selectedId,setSelectedId] = useState('');
   const [isNav, setIsNav] = useState(false);
   const [folderName, setFolderName] = useState('New Folder'); 
@@ -68,7 +69,7 @@ function Folders() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     SaveName(f.id);
-                    folder.refetch();
+                    folder.fetchData('folders');
                   }
                 }}
                 autoFocus
