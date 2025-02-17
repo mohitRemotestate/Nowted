@@ -22,23 +22,29 @@ function Mid() {
     const [error, setError] = useState(null)
     const folderData = useFetchNotes('folders') //just for folder name
     const [folderName, setFolderName] = useState('');
-    const [url, setUrl] = useState({})
+    const [url, setUrl] = useState({
+        isFavorite : "",
+        isArchived : "false",
+        deleted : "false",
+        page : 1,
+        limit : 10,
+});
 
 
     const newData =useFetchNotes('notes',url);
     useEffect(()=>{
-        if(folderId === "trash"){
+        if(folderId == "trash"){
             setUrl({
-                trash: true,
+                deleted: true,
             })
             newData.refetch();
-        }else if(folderId === "favourite"){
+        }else if(folderId == "favourite"){
             setUrl({
-                favourite: true,
+                favorite: true,
             })
             newData.refetch();
         }
-        else if(folderId === "archived"){
+        else if(folderId == "archived"){
             setUrl({
                 archived: true,
             })
@@ -48,7 +54,7 @@ function Mid() {
         setData(newData.data);
         setLoading(newData.loading)
         setError(newData.error);
-    },[folderId])
+    },[folderId,newData])
 
 
     //folder name
@@ -87,7 +93,7 @@ function Mid() {
             {/* list of items */}
             <div>
             <ul className="overflow-y-auto max-h-215.5 scrl py-7.5 flex flex-col gap-2.5">
-                {data.notes>0?(data.notes.length>0 && data.notes.map((f:any)=>(
+                {data.notes.length>0?(data.notes.length>0 && data.notes.map((f:any)=>(
                     <NavLink
                         to={`/folder/${f.folder.id}/note/${f.id}`}
                         key={f.id} 
