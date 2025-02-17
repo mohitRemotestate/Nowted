@@ -5,6 +5,7 @@ import useFetchNotes from "../../Hooks/useFetchNotes.tsx";
 import usePatch from "../../Hooks/usePatch.tsx";
 import { NavLink, useParams } from "react-router-dom";
 import usePostRequest from "../../Hooks/usePost.tsx";
+import useDelete from '../../Hooks/useDelete';
 
 function Folders() {
   
@@ -15,12 +16,18 @@ function Folders() {
   const [folderName, setFolderName] = useState('New Folder'); 
   const Patchdata = usePatch();
   const {postData} = usePostRequest();
+  const Delete = useDelete();
 
   function changeName(id,name) {
     setFolderName(name);
     setIsNav(true);
     setSelectedId(id);
-  }
+    if(name == "delete"){
+      const deleteNoteById = async ()=>{
+        await Delete.deleteData(`folders/${folderId}`).then(()=>console.log("deleting folder")).catch(()=>console.log("error while deleting"))
+    }
+    deleteNoteById();
+  }}
 
   //name change patch file
   const SaveName = async(id) =>{
@@ -55,6 +62,7 @@ function Folders() {
               <input
                 type="text"
                 value={folderName}
+                key={f.id}
                 onChange={(e)=> setFolderName(e.target.value)}
                 onBlur={() => SaveName(f.id)}
                 onKeyDown={(e) => {

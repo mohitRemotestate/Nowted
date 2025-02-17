@@ -13,7 +13,7 @@ function NewNoteView() {
     const [title, setTitle] = useState("New Note");
     const [content, setContent] = useState("Enter content here");
     const [isEditable, setIsEditable] = useState(false);
-    const {postData} = usePostRequest();
+    const {postData,data,error} = usePostRequest();
     const folderData = useFetchNotes('folders') //just for folder name
     const [folderName, setFolderName] = useState('');
     const navigate = useNavigate();
@@ -26,14 +26,16 @@ function NewNoteView() {
 
  
   const saveNotepad = async() =>{
-    console.log('working')
     await postData("/notes", {
         folderId,
         title,
         content,
         isFavorite: false,
         isArchived: false,
-      }).then(()=>navigate(`/folder/${folderId}`));
+    }).then(()=>{
+      console.log('data: ', data, "error: ", error)
+      navigate(`/folder/${folderId}`)
+    });
   }
 
 

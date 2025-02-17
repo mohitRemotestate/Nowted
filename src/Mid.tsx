@@ -23,38 +23,50 @@ function Mid() {
     const folderData = useFetchNotes('folders') //just for folder name
     const [folderName, setFolderName] = useState('');
     const [url, setUrl] = useState({
-        isFavorite : "",
-        isArchived : "false",
-        deleted : "false",
+        favorite: undefined as boolean|undefined,
+        archived : false,
+        deleted : false,
         page : 1,
         limit : 10,
 });
 
 
     const newData =useFetchNotes('notes',url);
-    useEffect(()=>{
-        if(folderId == "trash"){
-            setUrl({
-                deleted: true,
-            })
-            newData.refetch();
-        }else if(folderId == "favourite"){
-            setUrl({
-                favorite: true,
-            })
-            newData.refetch();
+    // useEffect(()=>{
+    //     if (folderId === "trash") {
+    //         setUrl(prev => ({ ...prev, deleted: true }));
+    //     } else if (folderId === "favourite") {
+    //         setUrl(prev => ({ ...prev, favorite: true }));
+    //     } else if (folderId === "archived") {
+    //         setUrl(prev => ({ ...prev, archived: true }));
+    //     }
+        
+    //     newData.refetch();
+    //     if(newData.data){
+    //     setData(newData.data);
+    //     setLoading(newData.loading)
+    //     setError(newData.error);}
+    // },[folderId])
+    useEffect(() => {
+        setUrl((prev) => ({
+          ...prev,
+          favorite: folderId === "favourite" ? true : undefined,
+          archived: folderId === "archived" ? true : false,
+          deleted: folderId === "trash" ? true : false,
+        }));
+      }, [folderId]);
+    
+      useEffect(() => {
+        newData.refetch();
+      }, [url]); 
+    
+      useEffect(() => {
+        if (newData.data) {
+          setData(newData.data);
+          setLoading(newData.loading);
+          setError(newData.error);
         }
-        else if(folderId == "archived"){
-            setUrl({
-                archived: true,
-            })
-            newData.refetch();
-        }
-
-        setData(newData.data);
-        setLoading(newData.loading)
-        setError(newData.error);
-    },[folderId,newData])
+      }, [newData.data, newData.loading, newData.error]);
 
 
     //folder name

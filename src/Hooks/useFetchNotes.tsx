@@ -36,7 +36,6 @@ const useFetchNotes = (endpoint: string, params?: object) => {
 
   const fetchNotes = useCallback(async () => {
     setLoading(true);
-    console.log(mergedParams);
     try {
       const response = await AxiosApi.get('/notes', {
         params: {...mergedParams },
@@ -74,7 +73,6 @@ const useFetchNotes = (endpoint: string, params?: object) => {
   }, [folderId]);
 
   useEffect(() => {
-    console.log("to print in fetch notes  ")
     if (endpoint == `notes/${noteId}`) fetchSingleNote();
   }, [noteId]);
 
@@ -90,3 +88,4 @@ const useFetchNotes = (endpoint: string, params?: object) => {
 };
 
 export default useFetchNotes;
+

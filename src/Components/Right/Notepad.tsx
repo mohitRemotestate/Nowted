@@ -80,7 +80,6 @@ function Notepad() {
             };
 
             const deleteNoteById = async ()=>{
-                console.log("Hello WOrld");
                 await Delete.deleteData(`notes/${noteId}`).then(()=>navigate(`/folder/${folderId}`))}
 
         
