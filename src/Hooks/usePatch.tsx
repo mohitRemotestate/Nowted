@@ -28,8 +28,7 @@ const usePatch = () => {
         setLoading(false);
       }
     },
-    []
-  );
+    []);
 
   return { data, loading, error, patchData };
 };

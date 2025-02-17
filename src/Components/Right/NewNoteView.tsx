@@ -3,7 +3,7 @@ import usePostRequest from '../../Hooks/usePost';
 import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import useFetchNotes from "../../Hooks/useFetchNotes";
 
 function NewNoteView() {
@@ -13,9 +13,10 @@ function NewNoteView() {
     const [title, setTitle] = useState("New Note");
     const [content, setContent] = useState("Enter content here");
     const [isEditable, setIsEditable] = useState(false);
-    const {postData} = usePostRequest
+    const {postData} = usePostRequest();
     const folderData = useFetchNotes('folders') //just for folder name
     const [folderName, setFolderName] = useState('');
+    const navigate = useNavigate();
 
     useEffect(()=>{
         if(folderData.data){
@@ -24,14 +25,15 @@ function NewNoteView() {
     },[])
 
  
-  function saveNotepad(){
-    postData("/notes", {
+  const saveNotepad = async() =>{
+    console.log('working')
+    await postData("/notes", {
         folderId,
         title,
         content,
         isFavorite: false,
         isArchived: false,
-      });
+      }).then(()=>navigate(`/folder/${folderId}`));
   }
 
 

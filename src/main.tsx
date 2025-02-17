@@ -9,9 +9,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
       <Routes>
+        {/* <Route path='/folder/:folderId/note/newnote' element={<App />} /> */}
         <Route path='/folder/:folderId/note/:noteId' element={<App />} />
         <Route path='/folder/:folderId' element={<App />} />
-        <Route path='/folder/:folderId/note/newnote' element={<App />} />
         
         <Route path='*' element={<App />} />
         <Route path='/' element={<App />} />

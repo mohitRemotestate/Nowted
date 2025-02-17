@@ -8,6 +8,10 @@ const AxiosApi = axios.create({
 
 const useFetchNotes = (endpoint: string, params?: object) => {
   const { folderId, noteId } = useParams();
+  const foldername = ()=>{
+    if(folderId === "trash" || folderId === "favourite" || folderId === "archived") return null;
+    else return folderId;
+  }
 
   const defparams = {};
 
@@ -35,7 +39,7 @@ const useFetchNotes = (endpoint: string, params?: object) => {
     setLoading(true);
     try {
       const response = await AxiosApi.get('/notes', {
-        params: {...mergedParams, folderId },
+        params: {...mergedParams, foldername },
       });
       setData(response.data);
     } catch (err) {
@@ -43,7 +47,7 @@ const useFetchNotes = (endpoint: string, params?: object) => {
     } finally {
       setLoading(false);
     }
-  }, [folderId]);
+  }, [foldername]);
 
   const fetchSingleNote = useCallback(async () => {
     setLoading(true);
@@ -67,7 +71,7 @@ const useFetchNotes = (endpoint: string, params?: object) => {
 
   useEffect(() => {
     if (endpoint === 'notes') fetchNotes();
-  }, [folderId]);
+  }, [foldername]);
 
   useEffect(() => {
     if (endpoint === `notes/${noteId}`) fetchSingleNote();

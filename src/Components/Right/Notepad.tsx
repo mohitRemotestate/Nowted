@@ -3,13 +3,16 @@ import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
 import useFetchNotes from "../../Hooks/useFetchNotes";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import usePatch from "../../Hooks/usePatch.tsx";
+import useDelete from "../../Hooks/useDelete.tsx";
+
 
 function Notepad() {
-    const { noteId } = useParams();
+    const { noteId , folderId} = useParams();
     const { data, loading, error } = useFetchNotes(`notes/${noteId}`);
     const Patch = usePatch()
+    const Delete = useDelete();
 //data, loading, error
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
@@ -17,6 +20,7 @@ function Notepad() {
     const [isFavorite, setIsFavourite] = useState(false)
     const [popupVisible, setPopupVisible] = useState(false);
     const [isEditable, setIsEditable] = useState(false)
+    const navigate = useNavigate();
 
     const handleClickOutside = (event: any) => {
         if (event.target.closest('.popup-container') || event.target.closest('#menuIcon')) {
@@ -64,15 +68,22 @@ function Notepad() {
                             isFavorite//added title and content so that these become extra button to save data
                         })
                         break;
-                    case 'Delete':
-                        // handle delete logic here
+                    case 'Delete':{
+                        console.log("deleting a note")
+                        deleteNoteById();
                         break;
+                    }
                     default:
                         break;
                 }
                 setPopupVisible(false);
             };
-    
+
+            const deleteNoteById = async ()=>{
+                console.log("Hello WOrld");
+                await Delete.deleteData(`notes/${noteId}`).then(()=>navigate(`/folder/${folderId}`))}
+
+        
             function saveNotepad() {
                 Patch.patchData(`notes/${data.note.id}`, {
                     title,

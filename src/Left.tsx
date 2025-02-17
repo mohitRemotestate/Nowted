@@ -10,22 +10,20 @@ import Data from './Components/Data/Data.tsx'
 import './App.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { NavLink, redirectDocument, useParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import usePostRequest from './Hooks/usePost.tsx';
 
 
 function Left() {
   const {folderId} = useParams();
   const [isSearch, setIsSearch] = useState<boolean>(false);
+  const navigate = useNavigate();
   
-  function handleClick(e){
-    if(folderId){ 
-      // <NavLink 
-      // to={`/folder/${folderId}/newNote`}
-      // ></NavLink>
-    }
-    else{
-      alert("choose any folder first")
+  function handleClick() {
+    if (folderId && !["trash", "favourite", "archived"].includes(folderId)){
+      navigate(`/folder/${folderId}/note/newnote`);
+    } else {
+      alert("Choose any folder first");
     }
   }
 

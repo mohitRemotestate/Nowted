@@ -1,7 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import useFetchNotes from "./Hooks/useFetchNotes";
 import { NavLink, useParams } from "react-router-dom";
-import { NewLineKind } from 'typescript';
 
 
 interface Folder {
@@ -23,20 +22,36 @@ function Mid() {
     const [error, setError] = useState(null)
     const folderData = useFetchNotes('folders') //just for folder name
     const [folderName, setFolderName] = useState('');
+    const [url, setUrl] = useState({})
 
 
-    const newData =useFetchNotes('notes')
+    const newData =useFetchNotes('notes',url);
     useEffect(()=>{
         if(folderId === "trash"){
-            
+            setUrl({
+                trash: true,
+            })
+            newData.refetch();
+        }else if(folderId === "favourite"){
+            setUrl({
+                favourite: true,
+            })
+            newData.refetch();
         }
+        else if(folderId === "archived"){
+            setUrl({
+                archived: true,
+            })
+            newData.refetch();
+        }
+
         setData(newData.data);
-        setLoading(newData.loading);
+        setLoading(newData.loading)
         setError(newData.error);
-    },[folderId,newData])
+    },[folderId])
 
 
-    
+    //folder name
     useEffect(()=>{
         if(folderId ){
             if(folderId === "trash"){
@@ -49,14 +64,15 @@ function Mid() {
                 setFolderName("Archived Notes")
             }
             else if(folderData.data){
+
                 const id = folderData.data.folders.find(i => i.id ===folderId);
-                setFolderName(id.name)
+                setFolderName( id? id.name:"")
             }
         }
         else{
             setFolderName("All Files")
         }
-    },[folderData.data,folderId])
+    },[folderId])
     
     if(loading) return <h1 className='h-22 py-7.5 px-5 text-white'>Loading...</h1>
     if(data) return (
@@ -71,7 +87,7 @@ function Mid() {
             {/* list of items */}
             <div>
             <ul className="overflow-y-auto max-h-215.5 scrl py-7.5 flex flex-col gap-2.5">
-                {data.notes.length>0 && data.notes.map((f:any)=>(
+                {data.notes>0?(data.notes.length>0 && data.notes.map((f:any)=>(
                     <NavLink
                         to={`/folder/${f.folder.id}/note/${f.id}`}
                         key={f.id} 
@@ -84,7 +100,9 @@ function Mid() {
                             <div className='truncate'>{f.title}</div>
                         </div>
                     </NavLink>
-                ))}
+                ))):<div className=' h-24.5 p-5 text-white w-full h-7 font-sans font-semibold text-lg'>
+                    Folder is empty
+                    </div>}
             </ul>
             </div>
         </div>
