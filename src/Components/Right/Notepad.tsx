@@ -11,7 +11,7 @@ import useDelete from "../../Hooks/useDelete.tsx";
 function Notepad() {
     const { noteId , folderId} = useParams();
     const singleNote = useFetchNotes();
-    singleNote.fetchSingleNote(`${noteId}`);
+    
     const Patch = usePatch()
     const Delete = useDelete();
 //data, loading, error
@@ -23,6 +23,10 @@ function Notepad() {
     const [isEditable, setIsEditable] = useState(false)
     const navigate = useNavigate();
 
+    useEffect(()=>{
+        singleNote.fetchSingleNote();
+    },[noteId])
+
     const handleClickOutside = (event: any) => {
         if (event.target.closest('.popup-container') || event.target.closest('#menuIcon')) {
             return;
@@ -30,7 +34,7 @@ function Notepad() {
         setPopupVisible(false);
     };
 
-    const date = data ? new Date(data.note.updatedAt).toISOString().split('T')[0] : '';
+    const date = singleNote.data ? new Date(singleNote.data.note.updatedAt).toISOString().split('T')[0] : '';
 
     useEffect(() => {
         document.addEventListener('click', handleClickOutside);
@@ -40,11 +44,11 @@ function Notepad() {
     }, []);
 
     useEffect(() => {
-        if (data) {
-            setContent(data.note.content);
-            setTitle(data.note.title);
+        if (singleNote.data) {
+            setContent(singleNote.data.note.content);
+            setTitle(singleNote.data.note.title);
         }
-    }, [data]);
+    }, [singleNote.data]);
 
     
     const handleMenuClick = () => {
@@ -55,7 +59,7 @@ function Notepad() {
                 switch (option) {
                     case 'Archived':
                         setisArchived(!isArchived);
-                        Patch.patchData(`notes/${data.note.id}`, {
+                        Patch.patchData(`notes/${singleNote.data.note.id}`, {
                             title,
                             content,
                             isArchived,
@@ -63,7 +67,7 @@ function Notepad() {
                         break;
                     case 'Favorite':
                         setIsfavorite(!isFavorite);
-                        Patch.patchData(`notes/${data.note.id}`, {
+                        Patch.patchData(`notes/${singleNote.data.note.id}`, {
                             title,
                             content,
                             isFavorite//added title and content so that these become extra button to save data
@@ -85,7 +89,7 @@ function Notepad() {
 
         
             function saveNotepad() {
-                Patch.patchData(`notes/${data.note.id}`, {
+                Patch.patchData(`notes/${singleNote.data.note.id}`, {
                     title,
                     content,
                     isArchived,
@@ -97,9 +101,9 @@ function Notepad() {
                 });
             }
             
-    if (loading) return <h1 className="text-white">Loading...</h1>
+    if (singleNote.loading) return <h1 className="text-white">Loading...</h1>
     
-    if(data) return (
+    if(singleNote.data) return (
         <>
             {(
                 <div className="p-12 h-full w-full flex flex-col gap-7.5 ">
@@ -166,7 +170,7 @@ function Notepad() {
                         <div className="flex flex-row justify-between w-53 text-white h-18px">
                             <img src={ficon} alt="folder icon" />
                             <div>Folder</div>
-                            <div className="text-white">{data.note.folder.name}</div>
+                            <div className="text-white">{singleNote.data.note.folder.name}</div>
                         </div>
                     </div>
 
@@ -191,7 +195,7 @@ function Notepad() {
             )}
         </>
     );
-    if (error) return <div>There was an error.</div>;
+    if (singleNote.error) return <div>There was an error.</div>;
 }
 
 export default Notepad;

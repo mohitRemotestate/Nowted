@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import fc from '../../assets/folder-close.svg';
 import folderIcon from '../../assets/add-folder.svg';
 import useFetchNotes from "../../Hooks/useFetchNotes.tsx";
@@ -8,92 +8,115 @@ import usePostRequest from "../../Hooks/usePost.tsx";
 import useDelete from '../../Hooks/useDelete';
 
 function Folders() {
-  
   const { folderId } = useParams();
   const folder = useFetchNotes();
-  folder.fetchData('folders')
-  const [selectedId,setSelectedId] = useState('');
+  const [selectedId, setSelectedId] = useState('');
+  const [data, setData] = useState({...folder.data})
   const [isNav, setIsNav] = useState(false);
   const [folderName, setFolderName] = useState('New Folder'); 
-  const Patchdata = usePatch();
-  const {postData} = usePostRequest();
+  const patchData = usePatch();
+  const { postData } = usePostRequest();
   const Delete = useDelete();
+  
 
-  function changeName(id,name) {
+  // Fetch folders only once when component mounts
+  useEffect(() => {
+    folder.fetchData("folders");
+  }, []); 
+  useEffect(()=>{
+    setData(folder.data)
+    // console.log(folder.data)
+  },[folder.data])
+
+  const changeName = (id: string,name: string) => {
     setFolderName(name);
     setIsNav(true);
     setSelectedId(id);
-    if(name == "delete"){
-      const deleteNoteById = async ()=>{
-        await Delete.deleteData(`folders/${folderId}`).then(()=>console.log("deleting folder")).catch(()=>console.log("error while deleting"))
-    }
-    deleteNoteById();
-  }}
+  };
 
-  //name change patch file
-  const SaveName = async(id) =>{
-    await (Patchdata.patchData(`/folders/${id}`,{name:folderName})).then(folder.refetch);
+  // Patch request to save new folder name
+  const saveName = async (id: string,name: string) => {
+    if (name == "delete") {
+      Delete.deleteData(`folders/${id}`)
+        .then(() => console.log("Deleting folder..."))
+        .catch(() => console.log("Error while deleting"));
+      return;
+    }
+    try {
+      await patchData.patchData(`/folders/${id}`, { name: folderName });
+      folder.fetchData('folders');
+    } catch (error) {
+      console.error("Error updating folder name", error);
+    }
     setIsNav(false);
-    
+  };
+
+  if (folder.loading) {
+    return (
+      <div className='py-7.5 h-54'>
+        <div className='px-5 font-semibold text-white h-6.5 pb-2'>Folders</div>
+        <p className='text-white'>Loading...</p>
+      </div>
+    );
   }
 
-  if (folder.loading) return(
-    <>
-    <div className='py-7.5 h-54'>
-    <div className='px-5 font-semibold text-white h-6.5 pb-2'>Recents</div>
-    <p className='text-white'>Loading...</p>
-    </div>
-  </> 
-  )
-
-  if (folder.data)
-    return (
-      <div className='flex flex-col flex-1 h-fit'>
-        <div className='px-5 pb-2 font-semibold text-white h-6.5 flex flex-row justify-between'>
-          Folders <img src={folderIcon} onClick={async()=> {
-             await postData('/folders', { name: "New folder" }).then(folder.refetch)
-
-          }}/>
-        </div>
-        <ul className="flex flex-col overflow-y-auto h-50 scrl">
-          {folder.data.folders.map((f) => (
-            (isNav && selectedId===f.id ) ? (
-              <div className="list ">
-              <img className='w-5 h-5' src={fc} alt="" />
+  if(folder.data) return (<>
+    <div className='flex flex-col flex-1 h-fit'>
+      <div className='px-5 pb-2 font-semibold text-white h-6.5 flex flex-row justify-between'>
+        Folders 
+        <img
+          src={folderIcon}
+          alt="Add Folder"
+          className="cursor-pointer"
+          onClick={ () => {
+            postData('/folders', { name: "New Folder" })
+              .then(() => folder.fetchData("folders"))
+              .catch((err) => console.error("Failed:", err));
+          }
+          }
+        />
+      </div>
+      <ul className="flex flex-col overflow-y-auto h-50 scrl">
+        {folder.data?.folders?.map((f) => (
+          isNav && selectedId == f.id ? (
+            <div className="list" key={f.id}>
+              <img className='w-5 h-5' src={fc} alt="Folder Icon" />
               <input
                 type="text"
                 value={folderName}
-                key={f.id}
-                onChange={(e)=> setFolderName(e.target.value)}
-                onBlur={() => SaveName(f.id)}
+                onChange={(e) => setFolderName(e.target.value)}
+                onBlur={() => saveName(f.id,f.name)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    SaveName(f.id);
-                    folder.fetchData('folders');
+                    saveName(f.id,f.name);
                   }
                 }}
                 autoFocus
-                className="text-white w-full  "
+                className="text-white w-full"
               />
-              </div>
-            ) : (
-              <NavLink
-                to={`/folder/${f.id}`}
-                key={f.id}
-                className={`list ${f.id == folderId ? "active" : "hover:bg-gray-600"}`}
-                onDoubleClick={() => changeName(f.id,f.name)}
-              >
-                <img className='w-5 h-5' src={fc} alt="" />
-                <p className='truncate '>{ f.name}</p>
-              </NavLink>
-            )
-          ))}
-        </ul>
-      </div>
-    );
+            </div>
+          ) : (
+            <NavLink
+              to={`/folder/${f.id}`}
+              key={f.id}
+              className={`list ${f.id === folderId ? "active" : "hover:bg-gray-600"}`}
+              onDoubleClick={() => changeName(f.id,f.name)}
+            >
+              <img className='w-5 h-5' src={fc} alt="Folder Icon" />
+              <p className='truncate'>{f.name}</p>
+            </NavLink>)
+        ))}
+      </ul>
+    </div>
+    </>
+  );
 
-  if (folder.error) return <>{folder.error}</>;
+  if (folder.error) {
+    return <p className="text-white">{folder.error}</p>;
+  }
 }
 
 export default Folders;
+
+
 

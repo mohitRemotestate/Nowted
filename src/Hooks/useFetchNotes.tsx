@@ -96,79 +96,81 @@
 //notes/${noteId} have value from noteid
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { useParams } from "react-router-dom";
 
-
 const AxiosApi = axios.create({
-  baseURL: 'https://nowted-server.remotestate.com',
+  baseURL: "https://nowted-server.remotestate.com",
 });
-
-
 
 const useFetchNotes = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string |null>(null);
-  const {folderId , noteId} = useParams();
-  const folderName = ()=>{
-    if(folderId == "trash" || folderId == "favorite" || folderId == "archived") return undefined;
-    else return folderId;
-  }
-  const mergedParams = {folderId: folderName()};
+  const [error, setError] = useState<string | null>(null);
+  const { folderId, noteId } = useParams();
 
- 
-  //for notes/recent and folder only
-  const fetchData = useCallback(async (endpoint:string)=>{
-      setLoading(true);
-      try{
-        const response = await AxiosApi.get(`/${endpoint}`);
-        setData(response.data);
-      }catch(err){
-        setError(err as any);
-      }finally{
-        setLoading(false);
-      }
+  // Memoized folder name
+  const folderName = useMemo(() => {
+    return folderId === "trash" || folderId === "favorite" || folderId === "archived"
+      ? undefined
+      : folderId;
+  }, [folderId]);
 
-    // },[endpoint]
-  },[]);
+  const memoizedParams = useMemo(() => ({
+    folderId: folderName,
+  }), [folderName]);
 
-  //for detail of single note
-  const fetchSingleNote = useCallback(async(id)=>{
+  // Fetch generic data (folders, recent notes)
+  const fetchData = useCallback(async (endpoint: string) => {
     setLoading(true);
-    try{
-      const response = await AxiosApi.get(`/notes/${id}`);
-      setData(response.data)
-    }catch(err){
-      setError(err as any);
-    }finally{
+    try {
+      const response = await AxiosApi.get(`/${endpoint}`);
+      setData(response.data);
+    } catch (err) {
+      setError((err as any).response?.data?.message || "An error occurred");
+    } finally {
       setLoading(false);
     }
-  },[noteId])
+  }, []);
 
-  //for list of notes
-  const fetchNotes = useCallback(async (params?: object)=>{
-    const memoizedParams = useMemo(() => ({
-      ...params, folderId: folderName(),
-    }), [params, folderId]);
-
+  // Fetch details of a single note
+  const fetchSingleNote = useCallback(async () => {
+    if (!noteId) return;
     setLoading(true);
-    try{
-      const response = await AxiosApi.get(`/notes`,{
-        params: {...memoizedParams},
+    try {
+      const response = await AxiosApi.get(`/notes/${noteId}`);
+      setData(response.data);
+    } catch (err) {
+      setError((err as any).response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  }, [noteId]);
+
+  // Fetch list of notes
+  const fetchNotes = useCallback(async (para?: object) => {
+    setLoading(true);
+    try {
+      const response = await AxiosApi.get(`/notes`, {
+        params: { ...memoizedParams, ...para },
       });
       setData(response.data);
-    }catch(err){
-      setError(err);
-    }finally{
+    } catch (err) {
+      setError((err as any).response?.data?.message || "An error occurred");
+    } finally {
       setLoading(false);
     }
-  },[mergedParams, folderId]);
+  }, [memoizedParams]);
 
-  return {data, loading, error, fetchData, fetchNotes, fetchSingleNote}
-}
+  // Auto-fetch notes when `folderId` changes
+  // useEffect(() => {
+  //   fetchNotes();
+  // }, [fetchNotes]);
+  return { data, loading, error, fetchData, fetchNotes, fetchSingleNote };
+};
 
 export default useFetchNotes;
+
 
 
 //direction to use 

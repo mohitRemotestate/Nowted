@@ -15,15 +15,19 @@ function NewNoteView() {
     const [isEditable, setIsEditable] = useState(false);
     const {postData,data,error} = usePostRequest();
     const folderData = useFetchNotes() //just for folder name
-    folderData.fetchData("folders");
+    
     const [folderName, setFolderName] = useState('');
     const navigate = useNavigate();
 
     useEffect(()=>{
+      folderData.fetchData("folders");
+    },[])
+    
+    useEffect(()=>{
         if(folderData.data){
             const id = folderData.data.folders.find(i => i.id ===folderId);
             setFolderName(id.name)}
-    },[])
+    },[folderData.data])
 
  
   const saveNotepad = async() =>{

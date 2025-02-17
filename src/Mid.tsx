@@ -17,7 +17,8 @@ function Mid() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const folderList = useFetchNotes(); //just for folder name
-    folderList.fetchData('folders')
+  const [page, setPage] = useState(1)
+    
   const [folderName, setFolderName] = useState("");
   const [url, setUrl] = useState({
     favorite: undefined as boolean | undefined,
@@ -27,28 +28,19 @@ function Mid() {
     limit: 10,
   });
 
+  useEffect(()=>{
+    folderList.fetchData('folders')
+    
+  },[folderId])
+  
   const notes = useFetchNotes();
-  // useEffect(()=>{
-  //     if (folderId === "trash") {
-  //         setUrl(prev => ({ ...prev, deleted: true }));
-  //     } else if (folderId === "favorite") {
-  //         setUrl(prev => ({ ...prev, favorite: true }));
-  //     } else if (folderId === "archived") {
-  //         setUrl(prev => ({ ...prev, archived: true }));
-  //     }
-
-  //     newData.refetch();
-  //     if(newData.data){
-  //     setData(newData.data);
-  //     setLoading(newData.loading)
-  //     setError(newData.error);}
-  // },[folderId])
   useEffect(() => {
     setUrl({
       ...url,
       favorite: folderId == "favorite" ? true : undefined,
       archived: folderId == "archived" ? true : false,
       deleted: folderId == "trash" ? true : false,
+      page,
     });
   }, [folderId]);
 
@@ -96,7 +88,7 @@ function Mid() {
           </div>
 
           {/* list of items */}
-          <div>
+          <div className="flex flex-col gap-8">
             <ul className="overflow-y-auto max-h-215.5 scrl py-7.5 flex flex-col gap-2.5">
               {data.notes.length > 0 ? (
                 data.notes.length > 0 &&
@@ -122,6 +114,34 @@ function Mid() {
                 </div>
               )}
             </ul>
+
+            <div className="flex flex-row justify-around">
+            <button type='button' key="prev" 
+            onClick={()=>{
+                console.log(url.page)
+                if(url.page>0){
+                    const page = url.page
+                    setUrl({...url, page: page - 1})
+                    console.log(url.page)
+
+                }
+            }}
+            className="text-white border-purple-900 bg-purple-800 border-2 rounded-xl p-3">
+              Prev
+          </button>
+          <button type='button' key="next"
+            onClick={()=>{
+                console.log(url.page)
+                if(url.page<data.total){
+                    const page = url.page
+                    setUrl({...url, page:page+1});
+                console.log(url.page)
+                }
+            }}
+            className="text-white border-purple-900 border-2 bg-purple-800 rounded-xl p-3">
+              Next
+          </button>
+          </div>
           </div>
         </div>
       </>

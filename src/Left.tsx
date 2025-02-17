@@ -14,7 +14,7 @@ import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import usePostRequest from './Hooks/usePost.tsx';
 
 
-function Left() {
+function Left(Renderlist) {
   const {folderId} = useParams();
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function Left() {
 </div>
     <div className='flex flex-col'>
     {/* recents */}
-        <Recent />  
+      <Recent Renderlist = {Renderlist.recentRender}/>  
     
 
     {/* Folders */}
