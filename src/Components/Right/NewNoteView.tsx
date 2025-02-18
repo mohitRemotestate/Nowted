@@ -1,10 +1,11 @@
-import { useState,useEffect } from "react";
+import { useState,useEffect,useContext } from "react";
 import usePostRequest from '../../Hooks/usePost';
 import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
 import { useParams,useNavigate } from 'react-router-dom';
 import useFetchNotes from "../../Hooks/useFetchNotes";
+import //context here and then make a variable of that and set that after navigate to in the same file 
 
 function NewNoteView() {
   // setPostRender.setPostrender(prev => !prev)
@@ -45,6 +46,7 @@ function NewNoteView() {
       isArchived: false,
     });
     navigate(`/folder/${folderId}/notes/${x?.data.id}`);
+    
   }
 
 
@@ -57,7 +59,7 @@ function NewNoteView() {
             id="title"
             type="text"
             value={title}
-            onChange={debounceSave}
+            onChange={(e)=>{setTitle(e.target.value)}}
             onKeyDown={(e) => {
               if (e.key === "Enter") saveNotepad();
             }}
@@ -98,7 +100,7 @@ function NewNoteView() {
             <textarea
                 id="body"
                 value={content}
-                onChange={debounceSave}
+                onChange={(e)=>setContent(e.target.value)}
                 onKeyDown={(e)=>{
                     if(e.key === "s" && e.ctrlKey) {
                         e.preventDefault()

@@ -96,10 +96,6 @@ function Mid() {
                 data.notes.map((f: any) => (
                   <NavLink
                     to={`/folder/${folderId}/note/${f.id}`
-                      // more == "undefined"
-                      //   ? 
-                        
-                        // : `${more}/${f.id}`
                     }
                     key={f.id}
                     // onClick={ClickActivity}
