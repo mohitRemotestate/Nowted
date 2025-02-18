@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import fc from '../../assets/folder-close.svg';
 import folderIcon from '../../assets/add-folder.svg';
 import useFetchNotes from "../../Hooks/useFetchNotes.tsx";
 import usePatch from "../../Hooks/usePatch.tsx";
 import { NavLink, useParams } from "react-router-dom";
 import usePostRequest from "../../Hooks/usePost.tsx";
+import Rerender from '../../Context/Context.ts';
 import useDelete from '../../Hooks/useDelete';
+
 
 function Folders() {
   const { folderId } = useParams();
   const folder = useFetchNotes();
   const [selectedId, setSelectedId] = useState('');
   const [data, setData] = useState({...folder.data})
+  const render = useContext(Rerender)
   const [isNav, setIsNav] = useState(false);
   const [folderName, setFolderName] = useState('New Folder'); 
   const patchData = usePatch();
@@ -22,7 +25,8 @@ function Folders() {
   // Fetch folders only once when component mounts
   useEffect(() => {
     folder.fetchData("folders");
-  }, []); 
+  }, [render.renderRecent]); 
+
   useEffect(()=>{
     setData(folder.data)
     // console.log(folder.data)

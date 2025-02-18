@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
@@ -9,14 +9,18 @@ import favNote from "../../assets/favStarNotepad.svg"
 import delNote from "../../assets/DeleteNotepadIcon.svg"
 import archiveNote from "../../assets/archivedNotepad.svg"
 import useDelete from "../../Hooks/useDelete.tsx";
+import Rerender from '../../Context/Context';
+import { useDebounce } from "../../Hooks/useDebounce.tsx";
+
 
 
 function Notepad() {
     const { noteId , folderId} = useParams();
     const singleNote = useFetchNotes();
-    
+    const render = useContext(Rerender)
     const Patch = usePatch()
     const Delete = useDelete();
+    
 //data, loading, error
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
@@ -51,7 +55,7 @@ function Notepad() {
         if (singleNote.data) {
             setContent(singleNote.data.note.content);
             setTitle(singleNote.data.note.title);
-            console.log(singleNote.data)
+            // console.log(singleNote.data)
             setIsfavorite(singleNote.data.note.isFavorite)
             setisArchived(singleNote.data.note.isArchived)
         }
@@ -61,6 +65,14 @@ function Notepad() {
     const handleMenuClick = () => {
         setPopupVisible((prev) => !prev);
     };
+
+    useEffect(()=>{
+        const timeout = setTimeout(()=>{
+            saveNotepad()
+        },2000)
+        return()=> clearTimeout(timeout)
+    },[content, title]);
+    
     
     const handleOptionClick = (option: string) => {
                 switch (option) {
@@ -88,6 +100,7 @@ function Notepad() {
                     default:
                         break;
                 }
+                render.setrenderRecent(prev=>!prev)
                 setPopupVisible(false);
             };
 

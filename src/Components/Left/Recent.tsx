@@ -1,18 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import doc from '../../assets/doc-icon.svg';
 import useFetchNotes from "../../Hooks/useFetchNotes";
 import { NavLink, useParams } from 'react-router-dom';
+import Rerender from '../../Context/Context';
 
-function Recent(Renderlist) {
+
+function Recent() {
   const { folderId, noteId } = useParams();
-  const recent = useFetchNotes();
+  const {data: recentData,loading,error,fetchData} = useFetchNotes();
+  const render = useContext(Rerender)
+  const [data,setData] = useState('')
 
-  // console.log(Renderlist,"in recent ")
-  useEffect(() => {
-    recent.fetchData("notes/recent");
-  }, [Renderlist.recentRender]); 
+useEffect(()=>{
+  fetchData('notes/recent')
+},[render.renderRecent])
 
-  if (recent.loading) {
+useEffect(()=>{
+  setData(recentData)
+},[recentData])
+ 
+
+  if (loading) {
     return (
       <div className="py-7.5 h-54">
         <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
@@ -21,16 +29,16 @@ function Recent(Renderlist) {
     );
   }
 
-  if (recent.error) {
-    return <p className="text-red-500">{recent.error}</p>;
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
   }
 
   return (
     <div className="py-7.5 h-54">
       <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
-      {recent.data?.recentNotes?.length > 0 ? (
+      {data?.recentNotes?.length > 0 ? (
         <ul>
-          {recent.data.recentNotes.map((rec: any) => (
+          {data.recentNotes.map((rec: any) => (
             <NavLink
               to={`/folder/${rec.folder?.id}/note/${rec.id}`}
               key={rec.id}

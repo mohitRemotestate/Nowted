@@ -17,8 +17,9 @@ function Mid() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const folderList = useFetchNotes(); //just for folder name
-  const [page, setPage] = useState(1)
-    
+  const [page, setPage] = useState(1);
+  const [isDeleted, setIsDeleted] = useState("");
+
   const [folderName, setFolderName] = useState("");
   const [url, setUrl] = useState({
     favorite: undefined as boolean | undefined,
@@ -28,11 +29,10 @@ function Mid() {
     limit: 10,
   });
 
-  useEffect(()=>{
-    folderList.fetchData('folders')
-    
-  },[folderId])
-  
+  useEffect(() => {
+    folderList.fetchData("folders");
+  }, [folderId]);
+
   const notes = useFetchNotes();
   useEffect(() => {
     setUrl({
@@ -95,10 +95,17 @@ function Mid() {
                 data.notes.length > 0 &&
                 data.notes.map((f: any) => (
                   <NavLink
-                    to={`/folder/${f.folder.id}/note/${f.id}`}
+                    to={`/folder/${folderId}/note/${f.id}`
+                      // more == "undefined"
+                      //   ? 
+                        
+                        // : `${more}/${f.id}`
+                    }
                     key={f.id}
                     // onClick={ClickActivity}
-                    className={`h-24.5 p-5 text-white flex flex-col gap-2 ${f.id == noteId ?"activemid":"mid"}`}
+                    className={`h-24.5 p-5 text-white flex flex-col gap-2 ${
+                      f.id == noteId ? "activemid" : "mid"
+                    }`}
                   >
                     <div className="truncate w-full h-7 font-sans font-semibold text-lg">
                       {f.title}
@@ -117,32 +124,37 @@ function Mid() {
             </ul>
 
             <div className="flex flex-row justify-around">
-            <button type='button' key="prev" 
-            onClick={()=>{
-                // console.log(url.page)
-                if(url.page>1){
-                    const page = url.page
-                    setUrl({...url, page: page - 1})
+              <button
+                type="button"
+                key="prev"
+                onClick={() => {
+                  // console.log(url.page)
+                  if (url.page > 1) {
+                    const page = url.page;
+                    setUrl({ ...url, page: page - 1 });
                     // console.log(url.page)
-
-                }
-            }}
-            className="text-white border-purple-900 bg-purple-800 border-2 rounded-xl p-3">
-              Prev
-          </button>
-          <button type='button' key="next"
-            onClick={()=>{
-                // console.log(url.page)
-                if(url.page<Math.ceil((data.total)/10)){
-                    const page = url.page
-                    setUrl({...url, page:page+1});
-                // console.log(url.page)
-                }
-            }}
-            className="text-white border-purple-900 border-2 bg-purple-800 rounded-xl p-3">
-              Next
-          </button>
-          </div>
+                  }
+                }}
+                className="text-white border-purple-900 bg-purple-800 border-2 rounded-xl p-3"
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                key="next"
+                onClick={() => {
+                  // console.log(url.page)
+                  if (url.page < Math.ceil(data.total / 10)) {
+                    const page = url.page;
+                    setUrl({ ...url, page: page + 1 });
+                    // console.log(url.page)
+                  }
+                }}
+                className="text-white border-purple-900 border-2 bg-purple-800 rounded-xl p-3"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </>

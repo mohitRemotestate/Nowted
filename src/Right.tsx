@@ -5,20 +5,23 @@ import Restore from './Components/Right/Restore.tsx'
 import { useParams } from 'react-router-dom'
 import useFetchNotes from './Hooks/useFetchNotes.tsx'
 import NewNoteView from './Components/Right/NewNoteView.tsx'
+import { useEffect, useState } from 'react';
 
 
 
 
-function Right(setPostRender) {
+function Right() {
 
-    const{noteId , folderId} = useParams();
-    // console.log(setpostRender);
+    const{noteId , folderId} = useParams(); 
+    const SingleNote = useFetchNotes();
+   
+    
 if(noteId == "newnote"){ 
-    return <NewNoteView setPostRender={setPostRender.setPostRender}/>}
-else if(noteId && (folderId != "trash")){
-     return <Notepad />}
-else if((folderId == "trash")&& (noteId)){ 
-    return <Restore />}
+    return <NewNoteView />}
+else if(noteId && (folderId == "trash")){
+     return <Restore />}
+else if((folderId != "trash")&& (noteId)){ 
+    return <Notepad />}
 else return <Default />
 
 

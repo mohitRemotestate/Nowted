@@ -6,11 +6,15 @@ import ficon from "../../assets/notes-file-icon.svg";
 import { useParams,useNavigate } from 'react-router-dom';
 import useFetchNotes from "../../Hooks/useFetchNotes";
 
-function NewNoteView(setPostRender) {
+function NewNoteView() {
   // setPostRender.setPostrender(prev => !prev)
-    console.log(setPostRender.setPostRender)
     const {folderId} = useParams();
     const date = new Date().toISOString().split('T')[0];
+
+  function debounceSave(e){
+    // if(e.target == "textarea") 
+    console.log(e.target.id)
+  }
 
     const [title, setTitle] = useState("New Note");
     const [content, setContent] = useState("Enter content here");
@@ -53,7 +57,7 @@ function NewNoteView(setPostRender) {
             id="title"
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={debounceSave}
             onKeyDown={(e) => {
               if (e.key === "Enter") saveNotepad();
             }}
@@ -94,14 +98,13 @@ function NewNoteView(setPostRender) {
             <textarea
                 id="body"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={debounceSave}
                 onKeyDown={(e)=>{
                     if(e.key === "s" && e.ctrlKey) {
                         e.preventDefault()
                         saveNotepad()
                     }
                 }}
-                onBlur={saveNotepad}
                 autoFocus
                 className="text-white focus:outline-none h-full w-full"
             />
