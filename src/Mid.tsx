@@ -57,7 +57,7 @@ function Mid() {
 
   useEffect(() => {
     notes.fetchNotes(url);
-  }, [url]);
+  }, [url,render.renderRecent]);
 
   useEffect(() => {
     if (notes.data) {
