@@ -17,12 +17,12 @@ const usePostRequest = () => {
       try {
         const response = await AxiosApi.post(endpoint, body, {
           headers: {
-            "accept": "text/plain",
+            accept: "text/plain",
             "Content-Type": "application/json",
           },
         });
         setData(response.data);
-        return response.data;
+        return response;
       } catch (err) {
         setError("Error while making a POST request");
         console.error(err);

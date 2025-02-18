@@ -9,11 +9,12 @@ import NewNoteView from './Components/Right/NewNoteView.tsx'
 
 
 
-function Right() {
-    const{noteId , folderId} = useParams();
+function Right(setPostRender) {
 
+    const{noteId , folderId} = useParams();
+    // console.log(setpostRender);
 if(noteId == "newnote"){ 
-    return <NewNoteView />}
+    return <NewNoteView setPostRender={setPostRender.setPostRender}/>}
 else if(noteId && (folderId != "trash")){
      return <Notepad />}
 else if((folderId == "trash")&& (noteId)){ 

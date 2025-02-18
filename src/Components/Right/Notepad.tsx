@@ -30,6 +30,7 @@ function Notepad() {
         singleNote.fetchSingleNote();
     },[noteId])
 
+
     const handleClickOutside = (event: any) => {
         if (event.target.closest('.popup-container') || event.target.closest('#menuIcon')) {
             return;
@@ -50,6 +51,9 @@ function Notepad() {
         if (singleNote.data) {
             setContent(singleNote.data.note.content);
             setTitle(singleNote.data.note.title);
+            console.log(singleNote.data)
+            setIsfavorite(singleNote.data.note.isFavorite)
+            setisArchived(singleNote.data.note.isArchived)
         }
     }, [singleNote.data]);
 
@@ -145,13 +149,13 @@ function Notepad() {
                                 onClick={() => handleOptionClick("Archived")}
                                 className="py-2 flex flex-row px-4 gap-4 w-full text-left hover:bg-gray-500 text-white"
                             >
-                                <img src={archiveNote} />Archived
+                                <img src={archiveNote} />{isArchived?"Remove Archive":"Archive"}
                             </button>
                             <button
                                 onClick={() => handleOptionClick("Favorite")}
                                 className="py-2 flex flex-row px-4 gap-4 w-full text-left hover:bg-gray-500 border-b-2 border-white text-white"
                             >
-                                <img src={favNote} />Favorite
+                                <img src={favNote} />{isFavorite?"Remove Favourite":"Favourite"}
                             </button>
                             
                             <button

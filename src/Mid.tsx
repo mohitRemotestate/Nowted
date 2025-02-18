@@ -50,7 +50,7 @@ function Mid() {
 
   useEffect(() => {
     if (notes.data) {
-      console.log(notes);
+      // console.log(notes);
       setData(notes.data);
       setLoading(notes.loading);
       setError(notes.error);
@@ -119,11 +119,11 @@ function Mid() {
             <div className="flex flex-row justify-around">
             <button type='button' key="prev" 
             onClick={()=>{
-                console.log(url.page)
+                // console.log(url.page)
                 if(url.page>1){
                     const page = url.page
                     setUrl({...url, page: page - 1})
-                    console.log(url.page)
+                    // console.log(url.page)
 
                 }
             }}
@@ -132,11 +132,11 @@ function Mid() {
           </button>
           <button type='button' key="next"
             onClick={()=>{
-                console.log(url.page)
+                // console.log(url.page)
                 if(url.page<Math.ceil((data.total)/10)){
                     const page = url.page
                     setUrl({...url, page:page+1});
-                console.log(url.page)
+                // console.log(url.page)
                 }
             }}
             className="text-white border-purple-900 border-2 bg-purple-800 rounded-xl p-3">

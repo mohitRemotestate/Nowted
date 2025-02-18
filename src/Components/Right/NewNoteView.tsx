@@ -6,7 +6,9 @@ import ficon from "../../assets/notes-file-icon.svg";
 import { useParams,useNavigate } from 'react-router-dom';
 import useFetchNotes from "../../Hooks/useFetchNotes";
 
-function NewNoteView() {
+function NewNoteView(setPostRender) {
+  // setPostRender.setPostrender(prev => !prev)
+    console.log(setPostRender.setPostRender)
     const {folderId} = useParams();
     const date = new Date().toISOString().split('T')[0];
 
@@ -31,16 +33,14 @@ function NewNoteView() {
 
  
   const saveNotepad = async() =>{
-    await postData("/notes", {
-        folderId,
-        title,
-        content,
-        isFavorite: false,
-        isArchived: false,
-    }).then(()=>{
-      console.log('data: ', data, "error: ", error)
-      navigate(`/folder/${folderId}`)
+    const x = await postData("/notes", {
+      folderId,
+      title,
+      content,
+      isFavorite: false,
+      isArchived: false,
     });
+    navigate(`/folder/${folderId}/notes/${x?.data.id}`);
   }
 
 

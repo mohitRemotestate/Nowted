@@ -3,11 +3,14 @@ import Left from './Left.tsx'
 import Mid from './Mid.tsx'
 import Right from './Right.tsx'
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 
 const App =()=>{
 
 const [recentRender, setRecentRender] = useState(true);
+const [postRender, setPostRender]= useState(false);
+// useEffect(()=>{console.log(postRender)},[])
 
     return (
         <div className="flex flex-row">
@@ -18,7 +21,7 @@ const [recentRender, setRecentRender] = useState(true);
                             <Mid />
                         </div>
                         <div className="w-full h-screen bg-left">
-                            <Right />
+                            <Right setPostRender={setPostRender}/>
                     
                         </div>
                     </div>
