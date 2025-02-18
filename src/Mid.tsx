@@ -90,7 +90,7 @@ function Mid() {
 
           {/* list of items */}
           <div className="flex flex-col gap-8">
-            <ul className="overflow-y-auto max-h-215.5 scrl py-7.5 flex flex-col gap-2.5">
+            <ul className="overflow-y-auto h-215.5 scrl py-7.5 flex flex-col gap-2.5">
               {data.notes.length > 0 ? (
                 data.notes.length > 0 &&
                 data.notes.map((f: any) => (
