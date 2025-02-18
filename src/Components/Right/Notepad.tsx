@@ -5,6 +5,9 @@ import ficon from "../../assets/notes-file-icon.svg";
 import useFetchNotes from "../../Hooks/useFetchNotes";
 import { useParams, useNavigate } from "react-router-dom";
 import usePatch from "../../Hooks/usePatch.tsx";
+import favNote from "../../assets/favStarNotepad.svg"
+import delNote from "../../assets/DeleteNotepadIcon.svg"
+import archiveNote from "../../assets/archivedNotepad.svg"
 import useDelete from "../../Hooks/useDelete.tsx";
 
 
@@ -136,25 +139,26 @@ function Notepad() {
                     {/* Popup for options */}
                     {popupVisible && (
                         <div
-                            className="popup-container absolute right-19 top-20 bg-slate-500 text-black w-36 h-50 flex flex-col items-center justify-center border rounded-md shadow-md"
+                            className="popup-container absolute right-19 top-20 bg-[#333333] text-black w-50 h-37.5 flex flex-col items-center justify-around border rounded-md shadow-md"
                         >
                             <button
                                 onClick={() => handleOptionClick("Archived")}
-                                className="py-2 px-4 w-full text-left hover:bg-gray-200"
+                                className="py-2 flex flex-row px-4 gap-4 w-full text-left hover:bg-gray-500 text-white"
                             >
-                                Archived
+                                <img src={archiveNote} />Archived
                             </button>
                             <button
                                 onClick={() => handleOptionClick("Favorite")}
-                                className="py-2 px-4 w-full text-left hover:bg-gray-200"
+                                className="py-2 flex flex-row px-4 gap-4 w-full text-left hover:bg-gray-500 border-b-2 border-white text-white"
                             >
-                                Favorite
+                                <img src={favNote} />Favorite
                             </button>
+                            
                             <button
                                 onClick={() => handleOptionClick("Delete")}
-                                className="py-2 px-4 w-full text-left hover:bg-gray-200"
+                                className="py-2 flex flex-row px-4 gap-4 w-full text-left hover:bg-gray-500 text-white"
                             >
-                                Delete
+                                <img src={delNote} />Delete
                             </button>
                         </div>
                     )}

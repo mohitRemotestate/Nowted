@@ -1,11 +1,28 @@
 @import "tailwindcss";
+:root {
+    --text: #ffffff
+}
+
 @theme {
     --color-primary-10: #181818;
     --color-primary-20: #1C1C1C;
+    --bg-slate-500: #333333
 }
 
 .active {
     background-color: #312EB5;
+}
+
+.mid {
+    background-color: #FFFFFF08;
+}
+
+.activemid {
+    background-color: #FFFFFF1A;
+}
+
+.activeFolder {
+    background-color: #FFFFFF08;
 }
 
 .ele:hover {

@@ -11,7 +11,7 @@ interface FolderData {
 }
 
 function Mid() {
-  const { folderId } = useParams();
+  const { folderId, noteId } = useParams();
 
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(true);
@@ -50,6 +50,7 @@ function Mid() {
 
   useEffect(() => {
     if (notes.data) {
+      console.log(notes);
       setData(notes.data);
       setLoading(notes.loading);
       setError(notes.error);
@@ -97,14 +98,14 @@ function Mid() {
                     to={`/folder/${f.folder.id}/note/${f.id}`}
                     key={f.id}
                     // onClick={ClickActivity}
-                    className="h-24.5 p-5 text-white flex flex-col gap-2 "
+                    className={`h-24.5 p-5 text-white flex flex-col gap-2 ${f.id == noteId ?"activemid":"mid"}`}
                   >
                     <div className="truncate w-full h-7 font-sans font-semibold text-lg">
                       {f.title}
                     </div>
                     <div className="flex flex-row gap-2.5">
                       <div>21/06/2022</div>
-                      <div className="truncate">{f.title}</div>
+                      <div className="truncate">{f.preview}</div>
                     </div>
                   </NavLink>
                 ))
@@ -119,7 +120,7 @@ function Mid() {
             <button type='button' key="prev" 
             onClick={()=>{
                 console.log(url.page)
-                if(url.page>0){
+                if(url.page>1){
                     const page = url.page
                     setUrl({...url, page: page - 1})
                     console.log(url.page)
@@ -132,7 +133,7 @@ function Mid() {
           <button type='button' key="next"
             onClick={()=>{
                 console.log(url.page)
-                if(url.page<data.total){
+                if(url.page<Math.ceil((data.total)/10)){
                     const page = url.page
                     setUrl({...url, page:page+1});
                 console.log(url.page)

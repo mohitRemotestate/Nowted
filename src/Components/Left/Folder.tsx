@@ -99,7 +99,7 @@ function Folders() {
             <NavLink
               to={`/folder/${f.id}`}
               key={f.id}
-              className={`list ${f.id === folderId ? "active" : "hover:bg-gray-600"}`}
+              className={`list ${f.id === folderId ? "activeFolder" : "hover:bg-gray-600"}`}
               onDoubleClick={() => changeName(f.id,f.name)}
             >
               <img className='w-5 h-5' src={fc} alt="Folder Icon" />
