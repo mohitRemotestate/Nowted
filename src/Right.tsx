@@ -3,9 +3,8 @@ import Default from './Components/Right/Default.tsx'
 import Notepad from './Components/Right/Notepad.tsx'
 import Restore from './Components/Right/Restore.tsx'
 import { useParams } from 'react-router-dom'
-import useFetchNotes from './Hooks/useFetchNotes.tsx'
 import NewNoteView from './Components/Right/NewNoteView.tsx'
-import { useEffect, useState } from 'react';
+
 
 
 
@@ -13,7 +12,7 @@ import { useEffect, useState } from 'react';
 function Right() {
 
     const{noteId , folderId} = useParams(); 
-    const SingleNote = useFetchNotes();
+    
    
     
 if(noteId == "newnote"){ 

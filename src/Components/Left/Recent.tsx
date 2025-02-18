@@ -8,7 +8,7 @@ import Rerender from '../../Context/Context';
 function Recent() {
   const { folderId, noteId } = useParams();
   const {data: recentData,loading,error,fetchData} = useFetchNotes();
-  const render = useContext(Rerender)
+  const render = useContext(Rerender);
   const [data,setData] = useState('')
 
 useEffect(()=>{

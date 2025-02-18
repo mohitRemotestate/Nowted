@@ -5,7 +5,9 @@ import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
 import { useParams,useNavigate } from 'react-router-dom';
 import useFetchNotes from "../../Hooks/useFetchNotes";
-import //context here and then make a variable of that and set that after navigate to in the same file 
+import Rerender from '../../Context/Context';
+
+//set that after navigate to in the same file 
 
 function NewNoteView() {
   // setPostRender.setPostrender(prev => !prev)
@@ -21,33 +23,34 @@ function NewNoteView() {
     const [content, setContent] = useState("Enter content here");
     const [isEditable, setIsEditable] = useState(false);
     const {postData,data,error} = usePostRequest();
-    const folderData = useFetchNotes() //just for folder name
-    
-    const [folderName, setFolderName] = useState('');
+    const render = useContext(Rerender);
+    const folderData = useFetchNotes(); //just for folder name
+
+    const [folderName, setFolderName] = useState("");
     const navigate = useNavigate();
 
-    useEffect(()=>{
+    useEffect(() => {
       folderData.fetchData("folders");
-    },[])
-    
-    useEffect(()=>{
-        if(folderData.data){
-            const id = folderData.data.folders.find(i => i.id ===folderId);
-            setFolderName(id.name)}
-    },[folderData.data])
+    }, []);
 
- 
-  const saveNotepad = async() =>{
-    const x = await postData("/notes", {
-      folderId,
-      title,
-      content,
-      isFavorite: false,
-      isArchived: false,
-    });
-    navigate(`/folder/${folderId}/notes/${x?.data.id}`);
-    
-  }
+    useEffect(() => {
+      if (folderData.data) {
+        const id = folderData.data.folders.find((i) => i.id === folderId);
+        setFolderName(id.name);
+      }
+    }, [folderData.data]);
+
+    const saveNotepad = async () => {
+      const x = await postData("/notes", {
+        folderId,
+        title,
+        content,
+        isFavorite: false,
+        isArchived: false,
+      });
+      navigate(`/folder/${folderId}/note/${x?.data.id}`);
+      render.setrenderRecent((prev: boolean) => !prev);
+    };
 
 
   return (

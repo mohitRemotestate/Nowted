@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import useFetchNotes from "./Hooks/useFetchNotes";
 import { NavLink, useParams } from "react-router-dom";
+import Rerender from './Context/Context';
+
+
 interface Folder {
   id: number;
   name: string;
@@ -12,6 +15,7 @@ interface FolderData {
 
 function Mid() {
   const { folderId, noteId } = useParams();
+  const render = useContext(Rerender);
 
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(true);
@@ -19,6 +23,7 @@ function Mid() {
   const folderList = useFetchNotes(); //just for folder name
   const [page, setPage] = useState(1);
   const [isDeleted, setIsDeleted] = useState("");
+  const notes = useFetchNotes();
 
   const [folderName, setFolderName] = useState("");
   const [url, setUrl] = useState({
@@ -31,9 +36,9 @@ function Mid() {
 
   useEffect(() => {
     folderList.fetchData("folders");
-  }, [folderId]);
+  }, [folderId, render.renderRecent]);
 
-  const notes = useFetchNotes();
+  
   useEffect(() => {
     setUrl({
       ...url,
@@ -63,7 +68,7 @@ function Mid() {
       if (folderId === "trash") {
         setFolderName("Trash");
       } else if (folderId === "favorite") {
-        setFolderName("favorite");
+        setFolderName("Favorite");
       } else if (folderId === "archived") {
         setFolderName("Archived Notes");
       } else if (folderList.data) {
