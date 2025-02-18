@@ -1,31 +1,39 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import logo from './assets/logo.svg'
 import search from './assets/search-icon.svg'
 import srch from './assets/searching.svg'
 import Recent from './Components/Left/Recent.tsx'
 import Folders from './Components/Left/Folder.tsx'
 import More from './Components/Left/More.tsx'
-import Data from './Components/Data/Data.tsx'
 import './App.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import usePostRequest from './Hooks/usePost.tsx';
+import {  useNavigate, useParams } from 'react-router-dom';
 
 
-function Left() {
-  const {folderId} = useParams();
+const Left: React.FC = () => {
+  const { folderId } = useParams<{ folderId?: string | undefined}>();
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const navigate = useNavigate();
-  
+
   function handleClick() {
-    if (folderId && !["trash", "favorite", "archived"].includes(folderId)){
+    if (folderId && !["trash", "favorite", "archived"].includes(folderId)) {
       navigate(`/folder/${folderId}/note/newnote`);
     } else {
-      alert("Choose any folder first");
+      alert("select folder first")
+      toast.warn('Select any folder first', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
     }
   }
+
 
   return (
     <div className='flex flex-col h-full'>     

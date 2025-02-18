@@ -1,31 +1,37 @@
-import React, { useState, useEffect,useContext } from "react";
+import { useState, useEffect,useContext } from "react";
 import useFetchNotes from "./Hooks/useFetchNotes";
 import { NavLink, useParams } from "react-router-dom";
 import Rerender from './Context/Context';
 
-
-interface Folder {
-  id: number;
-  name: string;
+interface FolderObjectType {
+  createdAt:string,
+  deletedAt:string|null,
+  id:string,
+  name:string,
+  updatedAt:string
 }
 
-interface FolderData {
-  folders: Folder[];
+
+
+interface DataType{
+  notes:Array<T> | null,
+  total:number |null,
 }
+
+
 
 function Mid() {
   const { folderId, noteId } = useParams();
   const render = useContext(Rerender);
 
-  const [data, setData] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<DataType>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const folderList = useFetchNotes(); //just for folder name
-  const [page, setPage] = useState(1);
-  const [isDeleted, setIsDeleted] = useState("");
+  const page = 1;
   const notes = useFetchNotes();
 
-  const [folderName, setFolderName] = useState("");
+  const [folderName, setFolderName] = useState<string>("");
   const [url, setUrl] = useState({
     favorite: undefined as boolean | undefined,
     archived: false,
@@ -72,7 +78,7 @@ function Mid() {
       } else if (folderId === "archived") {
         setFolderName("Archived Notes");
       } else if (folderList.data) {
-        const id = folderList.data.folders.find((i) => i.id === folderId);
+        const id = folderList.data.folders.find((i:FolderObjectType) => i.id === folderId);
         setFolderName(id ? id.name : "");
       }
     } else {
@@ -97,7 +103,6 @@ function Mid() {
           <div className="flex flex-col gap-8">
             <ul className="overflow-y-auto h-215.5 scrl py-7.5 flex flex-col gap-2.5">
               {data.notes.length > 0 ? (
-                data.notes.length > 0 &&
                 data.notes.map((f: any) => (
                   <NavLink
                     to={`/folder/${folderId}/note/${f.id}`

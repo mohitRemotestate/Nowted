@@ -3,6 +3,7 @@ import resicon from '../../assets/restore-icon.svg';
 import usePostRequest from "../../Hooks/usePost";
 import { Navigate, useParams, useNavigate, data } from "react-router-dom";
 import useFetchNotes from '../../Hooks/useFetchNotes';
+import { ToastContainer, toast } from 'react-toastify';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
@@ -58,9 +59,23 @@ function Restore(){
         </div>
     }
     else return(
+        <>
+        
         <div className="h-full w-full flex flex-col gap-2.5 text-white text-3xl justify-center items-center">
             Loading...
         </div>
+        <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"/>
+        </>
     )
 }
 

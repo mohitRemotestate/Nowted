@@ -3,17 +3,32 @@ import doc from '../../assets/doc-icon.svg';
 import useFetchNotes from "../../Hooks/useFetchNotes";
 import { NavLink, useParams } from 'react-router-dom';
 import Rerender from '../../Context/Context';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 function Recent() {
-  const { folderId, noteId } = useParams();
+  const { noteId } = useParams();
   const {data: recentData,loading,error,fetchData} = useFetchNotes();
   const render = useContext(Rerender);
   const [data,setData] = useState('')
 
 useEffect(()=>{
   fetchData('notes/recent')
-},[render.renderRecent])
+  if(error){
+    ()=>toast.error('error while fetching data', 
+    {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    });
+  }
+},[render.renderRecent,error])
+
+console.log(render.renderRecent)
 
 useEffect(()=>{
   setData(recentData)
@@ -30,7 +45,22 @@ useEffect(()=>{
   }
 
   if (error) {
-    return <p className="text-red-500">{error}</p>;
+    return (<>
+    <p className="text-red-500">{error}</p>;
+    <ToastContainer
+      position="top-center"
+      autoClose={5000}
+      hideProgressBar
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+      />
+    </>
+    )
   }
 
   return (

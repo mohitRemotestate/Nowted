@@ -87,6 +87,7 @@ function Notepad() {
         setisArchived(updatedArchive);
         render.setrenderRecent((prev: boolean) => !prev);
         break;
+
       case "Favorite":
         const updatedFavorite = !isFavorite;
         console.log("FAv:" + isFavorite);
@@ -98,15 +99,16 @@ function Notepad() {
         setIsfavorite(updatedFavorite);
         render.setrenderRecent((prev: boolean) => !prev);
         break;
+
       case "Delete": {
         console.log("deleting a note");
+        render.setrenderRecent((prev: boolean )=>!prev)
         deleteNoteById();
         break;
       }
       default:
         break;
     }
-    render.setrenderRecent((prev: boolean) => !prev);
     setPopupVisible(false);
   };
 
