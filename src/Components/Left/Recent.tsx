@@ -9,7 +9,7 @@ function Recent() {
   const { noteId } = useParams();
   const {data: recentData,loading,error,fetchData} = useFetchNotes();
   const render = useContext(Rerender);
-  const [data,setData] = useState('')
+  const [data,setData] = useState<any>('')
 
 useEffect(()=>{
   fetchData('notes/recent')
@@ -28,7 +28,7 @@ useEffect(()=>{
   }
 },[render.renderRecent,error])
 
-console.log(render.renderRecent)
+// console.log(render.renderRecent)
 
 useEffect(()=>{
   setData(recentData)

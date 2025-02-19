@@ -13,18 +13,11 @@ interface FolderObjectType {
 
 
 
-interface DataType{
-  notes:Array<T> | null,
-  total:number |null,
-}
-
-
-
 function Mid() {
   const { folderId, noteId } = useParams();
   const render = useContext(Rerender);
 
-  const [data, setData] = useState<DataType>();
+  const [data, setData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const folderList = useFetchNotes(); //just for folder name
@@ -44,6 +37,7 @@ function Mid() {
     folderList.fetchData("folders");
   }, [folderId, render.renderRecent]);
 
+  
   
   useEffect(() => {
     setUrl({
@@ -70,6 +64,7 @@ function Mid() {
 
   //folder name
   useEffect(() => {
+    // console.log(folderList)
     if (folderId) {
       if (folderId === "trash") {
         setFolderName("Trash");
@@ -84,7 +79,7 @@ function Mid() {
     } else {
       setFolderName("All Files");
     }
-  }, [folderId]);
+  }, [folderId,folderList]);
 
   if (loading)
     return <h1 className="h-22 py-7.5 px-5 text-white">Loading...</h1>;

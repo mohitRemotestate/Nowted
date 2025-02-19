@@ -6,6 +6,7 @@ import ficon from "../../assets/notes-file-icon.svg";
 import { useParams,useNavigate } from 'react-router-dom';
 import useFetchNotes from "../../Hooks/useFetchNotes";
 import Rerender from '../../Context/Context';
+import { toast } from 'react-toastify';
 
 //set that after navigate to in the same file 
 
@@ -13,11 +14,6 @@ function NewNoteView() {
   // setPostRender.setPostrender(prev => !prev)
     const {folderId} = useParams();
     const date = new Date().toISOString().split('T')[0];
-
-  function debounceSave(e){
-    // if(e.target == "textarea") 
-    console.log(e.target.id)
-  }
 
     const [title, setTitle] = useState("New Note");
     const [content, setContent] = useState("Enter content here");
@@ -35,7 +31,9 @@ function NewNoteView() {
 
     useEffect(() => {
       if (folderData.data) {
-        const id = folderData.data.folders.find((i) => i.id === folderId);
+        const id = folderData.data.folders.find((i:any) => {
+         console.log(i)
+          return i.id === folderId});
         setFolderName(id.name);
       }
     }, [folderData.data]);
@@ -51,6 +49,14 @@ function NewNoteView() {
       navigate(`/folder/${folderId}/note/${x?.data.id}`);
       render.setrenderRecent((prev: boolean) => !prev);
     };
+
+    useEffect(()=>{
+      if(data) toast.success("Note created");
+    },[data])
+
+    useEffect(()=>{
+      if(error) toast.error("Error while creating note")
+    },[error])
 
 
   return (

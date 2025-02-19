@@ -30,9 +30,10 @@ const usePostRequest = () => {
         setLoading(false);
       }
     },
-    []
+    []  
   );
 
+  console.log(data)
   return { postData, loading, error, data };
 };
 

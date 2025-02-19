@@ -7,6 +7,7 @@ import { NavLink, useParams } from "react-router-dom";
 import usePostRequest from "../../Hooks/usePost.tsx";
 import Rerender from '../../Context/Context.ts';
 import useDelete from '../../Hooks/useDelete';
+import { toast } from 'react-toastify';
 
 
 function Folders() {
@@ -42,15 +43,16 @@ function Folders() {
   const saveName = async (id: string,name: string) => {
     if (name == "delete") {
       Delete.deleteData(`folders/${id}`)
-        .then(() => console.log("Deleting folder..."))
-        .catch(() => console.log("Error while deleting"));
+        .then(() => {toast.success("Folder deleted")
+        folder.fetchData("folders")})
+        .catch(() => toast.error("error while deleting folder"));
       return;
     }
     try {
       await patchData.patchData(`/folders/${id}`, { name: folderName });
       folder.fetchData('folders');
     } catch (error) {
-      console.error("Error updating folder name", error);
+      toast.error("Error while changing folder name")
     }
     setIsNav(false);
   };
@@ -74,14 +76,16 @@ function Folders() {
           className="cursor-pointer"
           onClick={ () => {
             postData('/folders', { name: "New Folder" })
-              .then(() => folder.fetchData("folders"))
-              .catch((err) => console.error("Failed:", err));
+              .then(() => {
+                toast.success('Folder created')
+                folder.fetchData("folders")})
+              .catch((err) => toast.error("Error while creating folder"));
           }
           }
         />
       </div>
       <ul className="flex flex-col overflow-y-auto h-50 scrl">
-        {folder.data?.folders?.map((f) => (
+        {folder.data?.folders?.map((f:any) => (
           isNav && selectedId == f.id ? (
             <div className="list" key={f.id}>
               <img className='w-5 h-5' src={fc} alt="Folder Icon" />

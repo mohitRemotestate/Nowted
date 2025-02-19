@@ -12,7 +12,7 @@ function Restore(){
     const { noteId } = useParams();
     const navigate = useNavigate();
     const singleNote = useFetchNotes();
-    const [noteData, setNoteData] = useState('');
+    const [noteData, setNoteData] = useState<any>('');
 
     useEffect(()=>{
         singleNote.fetchSingleNote();

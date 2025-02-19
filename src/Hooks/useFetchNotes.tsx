@@ -3,12 +3,37 @@ import { useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+interface FolderData{
+  createdAt:string,
+  deletedAt: string| null,
+  id: string,
+  name: string,
+  updatedAt:string|null
+}
+
+interface Note{
+  createdAt: string,
+  deletedAt: string |null,
+  folder: FolderData,
+  folderId: string,
+  id: string,
+  isArchived: boolean,
+  isFavorite: boolean,
+  title: string,
+  updatedAt: string | null
+}
+
+interface NotesData {
+  notes:Note[],
+  total: number
+}
+
 const AxiosApi = axios.create({
   baseURL: "https://nowted-server.remotestate.com",
 });
 
 const useFetchNotes = () => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<NotesData|FolderData | null |any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { folderId, noteId } = useParams();
@@ -66,6 +91,7 @@ const useFetchNotes = () => {
     }
   }, [memoizedParams]);
 
+  // console.log(data)
   
   return { data, loading, error, fetchData, fetchNotes, fetchSingleNote };
 };

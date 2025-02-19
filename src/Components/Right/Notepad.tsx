@@ -1,3 +1,4 @@
+//toast baki h
 import React, { useEffect, useState,useContext } from "react";
 import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
@@ -32,15 +33,15 @@ function Notepad() {
     singleNote.fetchSingleNote();
   }, [noteId]);
 
-  const handleClickOutside = (event: any) => {
-    if (
-      event.target.closest(".popup-container") ||
-      event.target.closest("#menuIcon")
-    ) {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+  
+    if (target.closest(".popup-container") || target.closest("#menuIcon")) {
       return;
     }
     setPopupVisible(false);
   };
+  
 
   const date = singleNote.data
     ? new Date(singleNote.data.note.updatedAt).toISOString().split("T")[0]

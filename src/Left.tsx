@@ -6,13 +6,12 @@ import Recent from './Components/Left/Recent.tsx'
 import Folders from './Components/Left/Folder.tsx'
 import More from './Components/Left/More.tsx'
 import './App.css'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {  useNavigate, useParams } from 'react-router-dom';
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Left: React.FC = () => {
-  const { folderId } = useParams<{ folderId?: string | undefined}>();
+  const { folderId } = useParams<{ folderId?: string | undefined }>();
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -20,61 +19,65 @@ const Left: React.FC = () => {
     if (folderId && !["trash", "favorite", "archived"].includes(folderId)) {
       navigate(`/folder/${folderId}/note/newnote`);
     } else {
-      alert("select folder first")
-      toast.warn('Select any folder first', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        });
+      // alert("select folder first")
+      // toast.warn('Select any folder first', {
+      //   position: "top-center",
+      //   autoClose: 5000,
+      //   hideProgressBar: true,
+      //   closeOnClick: false,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   });
+      // notify();
+      toast.warn("select folder first");
     }
   }
 
-
   return (
-    <div className='flex flex-col h-full'>     
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between px-5 py-7.5 ">
+        <img src={logo} />
+        <img src={search} onClick={() => setIsSearch((p) => !p)} />
+      </div>
 
-    <div className="flex justify-between px-5 py-7.5 ">
-      <img src={logo} />
-      <img src={search} onClick={()=>(setIsSearch(p=>!p))}/>
-    </div>
+      {/* search and new file  */}
+      <div className="px-5 " id="isSearch">
+        {isSearch ? (
+          <div className="border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10 w-full">
+            <div>
+              <img src={srch} />
+            </div>
+            <input
+              type="input"
+              className="border-white rounded-xs text-white w-full"
+              placeholder="Search note"
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleClick}
+            className=" border-natural-800 rounded-xs btn text-white w-full h-10 font-sans font-semibold "
+          >
+            + New Note
+          </button>
+        )}
+      </div>
+      <div className="flex flex-col">
+        {/* recents */}
+        <Recent />
 
-    {/* search and new file  */}
-    <div className="px-5 " id='isSearch'>
-      
-  {isSearch?
-  (<div className='border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10 w-full'>
-    <div>
-      <img src={srch}/>
-    </div>
-    <input type='input' className='border-white rounded-xs text-white w-full' placeholder="Search note"/>
-  </div>)
-  :<button 
-  type="button" 
-  onClick={handleClick}
-  className=" border-natural-800 rounded-xs btn text-white w-full h-10 font-sans font-semibold ">
-    + New Note
-  </button> }
-</div>
-    <div className='flex flex-col'>
-    {/* recents */}
-      <Recent />  
-    
+        {/* Folders */}
+        <Folders />
 
-    {/* Folders */}
-      <Folders />
-
-
-    {/* more */}
+        {/* more */}
         <More />
+      </div>
     </div>
-    </div>
-  );  
-}
+  );
+};
 
 export default Left;
 
