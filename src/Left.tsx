@@ -19,18 +19,7 @@ const Left: React.FC = () => {
     if (folderId && !["trash", "favorite", "archived"].includes(folderId)) {
       navigate(`/folder/${folderId}/note/newnote`);
     } else {
-      // alert("select folder first")
-      // toast.warn('Select any folder first', {
-      //   position: "top-center",
-      //   autoClose: 5000,
-      //   hideProgressBar: true,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   });
-      // notify();
+      
       toast.warn("select folder first");
     }
   }

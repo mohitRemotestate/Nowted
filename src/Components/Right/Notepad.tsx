@@ -200,14 +200,18 @@ function Notepad() {
             {/* Date and Folder */}
             <div className="h-17 flex flex-col justify-between">
               <div className="flex flex-row justify-between w-53 text-white h-18px">
+                  <div className="flex flex-row gap-2 h-4.5">
                 <img src={calender} alt="calendar" />
-                <div>Date</div>
+                <div>Date   </div>
                 <div>{date}</div>
+                </div>
               </div>
               <div className="border-2 border-b-white" />
-              <div className="flex flex-row justify-between w-53 text-white h-18px">
+              <div className="flex flex-row justify-left text-white h-4.5 gap-2">
+                <div className="flex flex-row gap-2 h-4.5">
                 <img src={ficon} alt="folder icon" />
                 <div>Folder</div>
+                </div>
                 <div className="text-white">
                   {singleNote.data.note.folder.name}
                 </div>
