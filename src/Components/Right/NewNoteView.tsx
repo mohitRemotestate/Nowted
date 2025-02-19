@@ -4,9 +4,9 @@ import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
 import { useParams,useNavigate } from 'react-router-dom';
-import useFetchNotes from "../../Hooks/useFetchNotes";
 import Rerender from '../../Context/Context';
 import { toast } from 'react-toastify';
+import useFetchFolder from '../../Hooks/useFetchFolder';
 
 //set that after navigate to in the same file 
 
@@ -20,21 +20,19 @@ function NewNoteView() {
     const [isEditable, setIsEditable] = useState(false);
     const {postData,data,error} = usePostRequest();
     const render = useContext(Rerender);
-    const folderData = useFetchNotes(); //just for folder name
+    const folderData = useFetchFolder(); //just for folder name
 
     const [folderName, setFolderName] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
-      folderData.fetchData("folders");
+      folderData.fetchFolder();
     }, []);
 
     useEffect(() => {
       if (folderData.data) {
-        const id = folderData.data.folders.find((i:any) => {
-         console.log(i)
-          return i.id === folderId});
-        setFolderName(id.name);
+        const id = folderData.data?.folders?.find((i:any) => {return i.id === folderId});
+        if(id) setFolderName(id.name);
       }
     }, [folderData.data]);
 
@@ -68,7 +66,7 @@ function NewNoteView() {
             id="title"
             type="text"
             value={title}
-            onChange={(e)=>{setTitle(e.target.value)}}
+            onChange={(e)=>setTitle(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") saveNotepad();
             }}

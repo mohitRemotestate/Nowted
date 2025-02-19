@@ -1,4 +1,3 @@
-import React from 'react';
 import Docposter from '../../assets/main-frame-doc.svg';
 
 function Default(){

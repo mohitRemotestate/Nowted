@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Left: React.FC = () => {
+const MainSideBar: React.FC = () => {
   const { folderId } = useParams<{ folderId?: string | undefined }>();
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ const Left: React.FC = () => {
     if (folderId && !["trash", "favorite", "archived"].includes(folderId)) {
       navigate(`/folder/${folderId}/note/newnote`);
     } else {
-      
       toast.warn("select folder first");
     }
   }
@@ -68,7 +67,7 @@ const Left: React.FC = () => {
   );
 };
 
-export default Left;
+export default MainSideBar;
 
 
 

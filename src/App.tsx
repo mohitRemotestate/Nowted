@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import Left from "./Left";
+import MainSideBar from "./Left";
 import Mid from "./Mid";
 import Right from "./Right";
 import Rerender from "./Context/Context";
-
-
+// import Test from "./test";
 
 const App: React.FC = () => {
   const [renderRecent, setrenderRecent] = useState<boolean>(false);
@@ -13,7 +12,7 @@ const App: React.FC = () => {
     <Rerender.Provider value={{ renderRecent, setrenderRecent }}>
       <div className="flex flex-row">
         <div className="flex flex-col w-1/5 h-screen bg-left">
-          <Left />
+          <MainSideBar />
         </div>
         <div className="w-1/4 h-screen bg-mid">
           <Mid />
@@ -22,6 +21,7 @@ const App: React.FC = () => {
           <Right />
         </div>
       </div>
+      {/* <Test /> */}
     </Rerender.Provider>
   );
 };

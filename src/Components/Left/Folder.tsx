@@ -1,20 +1,27 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import fc from '../../assets/folder-close.svg';
 import folderIcon from '../../assets/add-folder.svg';
-import useFetchNotes from "../../Hooks/useFetchNotes.tsx";
 import usePatch from "../../Hooks/usePatch.tsx";
 import { NavLink, useParams } from "react-router-dom";
 import usePostRequest from "../../Hooks/usePost.tsx";
 import Rerender from '../../Context/Context.ts';
 import useDelete from '../../Hooks/useDelete';
 import { toast } from 'react-toastify';
+import useFetchFolder from '../../Hooks/useFetchFolder';
 
+// interface Folder{
+//   createdAt:string,
+//   deletedAt: string| null,
+//   id: string,
+//   name: string,
+//   updatedAt:string|null
+// }
 
 function Folders() {
   const { folderId } = useParams();
-  const folder = useFetchNotes();
+  const folder = useFetchFolder();
   const [selectedId, setSelectedId] = useState('');
-  const [data, setData] = useState({...folder.data})
+  // const [data, setData] = useState({...folder.data})
   const render = useContext(Rerender)
   const [isNav, setIsNav] = useState(false);
   const [folderName, setFolderName] = useState('New Folder'); 
@@ -25,13 +32,9 @@ function Folders() {
 
   // Fetch folders only once when component mounts
   useEffect(() => {
-    folder.fetchData("folders");
+    folder.fetchFolder();
   }, [render.renderRecent]); 
 
-  useEffect(()=>{
-    setData(folder.data)
-    // console.log(folder.data)
-  },[folder.data])
 
   const changeName = (id: string,name: string) => {
     setFolderName(name);
@@ -44,13 +47,13 @@ function Folders() {
     if (name == "delete") {
       Delete.deleteData(`folders/${id}`)
         .then(() => {toast.success("Folder deleted")
-        folder.fetchData("folders")})
+        folder.fetchFolder()})
         .catch(() => toast.error("error while deleting folder"));
       return;
     }
     try {
       await patchData.patchData(`/folders/${id}`, { name: folderName });
-      folder.fetchData('folders');
+      folder.fetchFolder();
     } catch (error) {
       toast.error("Error while changing folder name")
     }
@@ -78,13 +81,14 @@ function Folders() {
             postData('/folders', { name: "New Folder" })
               .then(() => {
                 toast.success('Folder created')
-                folder.fetchData("folders")})
-              .catch((err) => toast.error("Error while creating folder"));
+                folder.fetchFolder()})
+              .catch(() => toast.error("Error while creating folder"));
           }
           }
         />
       </div>
       <ul className="flex flex-col overflow-y-auto h-50 scrl">
+
         {folder.data?.folders?.map((f:any) => (
           isNav && selectedId == f.id ? (
             <div className="list" key={f.id}>

@@ -1,17 +1,17 @@
-import React from 'react';
 import resicon from '../../assets/restore-icon.svg';
 import usePostRequest from "../../Hooks/usePost";
-import { Navigate, useParams, useNavigate, data } from "react-router-dom";
-import useFetchNotes from '../../Hooks/useFetchNotes';
-import { ToastContainer, toast } from 'react-toastify';
+import {  useParams, useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import useFetchSingleNote from '../../Hooks/useFetchSingleNote.tsx';
+
 
 function Restore(){
     const { postData } = usePostRequest();
     const { noteId } = useParams();
     const navigate = useNavigate();
-    const singleNote = useFetchNotes();
+    const singleNote = useFetchSingleNote();
     const [noteData, setNoteData] = useState<any>('');
 
     useEffect(()=>{

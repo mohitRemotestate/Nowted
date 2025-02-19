@@ -1,4 +1,3 @@
-import React from 'react'
 import archived from '../../assets/archived.svg'
 import star from '../../assets/star.svg'
 import trash from '../../assets/trash.svg'

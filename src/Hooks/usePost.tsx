@@ -33,7 +33,7 @@ const usePostRequest = () => {
     []  
   );
 
-  console.log(data)
+  // console.log(data)
   return { postData, loading, error, data };
 };
 

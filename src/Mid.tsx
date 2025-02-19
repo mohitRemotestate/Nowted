@@ -1,7 +1,9 @@
 import { useState, useEffect,useContext } from "react";
-import useFetchNotes from "./Hooks/useFetchNotes";
+import useFetchNote from "./Hooks/useFetchNote";
 import { NavLink, useParams } from "react-router-dom";
 import Rerender from './Context/Context';
+import useFetchFolder from "./Hooks/useFetchFolder";
+
 
 interface FolderObjectType {
   createdAt:string,
@@ -20,9 +22,9 @@ function Mid() {
   const [data, setData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const folderList = useFetchNotes(); //just for folder name
+  const folderList = useFetchFolder(); //just for folder name
   const page = 1;
-  const notes = useFetchNotes();
+  const notes = useFetchNote();
 
   const [folderName, setFolderName] = useState<string>("");
   const [url, setUrl] = useState({
@@ -34,7 +36,7 @@ function Mid() {
   });
 
   useEffect(() => {
-    folderList.fetchData("folders");
+    folderList.fetchFolder();
   }, [folderId, render.renderRecent]);
 
   
@@ -50,7 +52,7 @@ function Mid() {
   }, [folderId]);
 
   useEffect(() => {
-    notes.fetchNotes(url);
+    notes.fetchNote(url);
   }, [url,render.renderRecent]);
 
   useEffect(() => {

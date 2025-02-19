@@ -1,9 +1,8 @@
 //toast baki h
-import React, { useEffect, useState,useContext } from "react";
+import { useEffect, useState,useContext } from "react";
 import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
-import useFetchNotes from "../../Hooks/useFetchNotes";
 import { useParams, useNavigate } from "react-router-dom";
 import usePatch from "../../Hooks/usePatch.tsx";
 import favNote from "../../assets/favStarNotepad.svg"
@@ -11,11 +10,12 @@ import delNote from "../../assets/DeleteNotepadIcon.svg"
 import archiveNote from "../../assets/archivedNotepad.svg"
 import useDelete from "../../Hooks/useDelete.tsx";
 import Rerender from '../../Context/Context';
+import useFetchSingleNote from '../../Hooks/useFetchSingleNote.tsx';
 
 
 function Notepad() {
   const { noteId, folderId } = useParams();
-  const singleNote = useFetchNotes();
+  const singleNote = useFetchSingleNote();
   const render = useContext(Rerender);
   const Patch = usePatch();
   const Delete = useDelete();
@@ -77,10 +77,11 @@ function Notepad() {
   }, [content, title]);
 
   const handleOptionClick = (option: string) => {
+    if(singleNote.data){
     switch (option) {
       case "Archived":
         const updatedArchive = !isArchived;
-        Patch.patchData(`notes/${singleNote.data.note.id}`, {
+        Patch.patchData(`notes/${singleNote?.data.note.id}`, {
           title,
           content,
           isArchived: updatedArchive,
@@ -111,6 +112,7 @@ function Notepad() {
         break;
     }
     setPopupVisible(false);
+}
   };
 
   const deleteNoteById = async () => {
@@ -120,7 +122,7 @@ function Notepad() {
   };
 
   function saveNotepad() {
-    Patch.patchData(`notes/${singleNote.data.note.id}`, {
+    Patch.patchData(`notes/${noteId}`, {
       title,
       content,
       isArchived,

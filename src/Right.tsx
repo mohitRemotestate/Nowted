@@ -1,4 +1,3 @@
-import React from 'react'
 import Default from './Components/Right/Default.tsx'
 import Notepad from './Components/Right/Notepad.tsx'
 import Restore from './Components/Right/Restore.tsx'

@@ -1,18 +1,18 @@
-import React, { useEffect, useState,useContext } from 'react';
+import  { useEffect, useState,useContext } from 'react';
 import doc from '../../assets/doc-icon.svg';
-import useFetchNotes from "../../Hooks/useFetchNotes";
+import useFetchRecent from "../../Hooks/useFetchRecent";
 import { NavLink, useParams } from 'react-router-dom';
 import Rerender from '../../Context/Context';
 import { ToastContainer, toast } from 'react-toastify';
 
 function Recent() {
   const { noteId } = useParams();
-  const {data: recentData,loading,error,fetchData} = useFetchNotes();
+  const {data: recentData,loading,error,fetchRecent} = useFetchRecent();
   const render = useContext(Rerender);
-  const [data,setData] = useState<any>('')
+  const [data,setData] = useState(recentData)
 
 useEffect(()=>{
-  fetchData('notes/recent')
+  fetchRecent();
   if(error){
     ()=>toast.error('error while fetching data', 
     {
@@ -63,7 +63,7 @@ useEffect(()=>{
     )
   }
 
-  return (
+  if(data) return (
     <div className="py-7.5 h-54">
       <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
       {data?.recentNotes?.length > 0 ? (
