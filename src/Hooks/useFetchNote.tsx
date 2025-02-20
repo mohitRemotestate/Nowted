@@ -4,15 +4,41 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 
+interface Folder{
+    createdAt:string,
+    deletedAt: string| null,
+    id: string,
+    name: string,
+    updatedAt:string|null
+}
+
+interface Note{
+    id: string,
+        folderId: string,
+        title: string,
+        preview: string,
+        isFavorite: boolean,
+        isArchived: boolean,
+        createdAt: string,
+        updatedAt: string,
+        deletedAt: null|string,
+        folder: Folder
+}
+
+interface NoteList{
+    notes : Array<Note>,
+    total: number
+}
+
 const AxiosApi = axios.create({
     baseURL: "https://nowted-server.remotestate.com",
 });
 
 function useFetchNote(){
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<NoteList | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<any>(null);
-  const { folderId, noteId } = useParams();
+  const [error, setError] = useState<Error>();
+  const { folderId } = useParams();
 
   const folderName = useMemo(() => {
     return folderId === "trash" || folderId === "favorite" || folderId === "archived"
@@ -32,7 +58,7 @@ function useFetchNote(){
             })
             setData(response.data)
         } catch(err){
-            setError(err)
+            setError(err as Error)
         } finally{
             setLoading(false);
         }

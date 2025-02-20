@@ -104,7 +104,6 @@ function Notepad() {
 
       case "Delete": {
         console.log("deleting a note");
-        render.setrenderRecent((prev: boolean )=>!prev)
         deleteNoteById();
         break;
       }
@@ -117,7 +116,8 @@ function Notepad() {
 
   const deleteNoteById = async () => {
     await Delete.deleteData(`notes/${noteId}`).then(() =>
-      navigate(`/folder/${folderId}`)
+    {render.setrenderRecent(prev=>!prev)
+      navigate(`/folder/${folderId}`)}
     );
   };
 
@@ -130,6 +130,7 @@ function Notepad() {
     })
       .then(() => {
         setIsEditable(false);
+        render.setrenderRecent(prev => !prev)
       })
       .catch((error) => {
         console.error("Error updating note:", error);

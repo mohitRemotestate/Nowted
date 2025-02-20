@@ -6,7 +6,7 @@ const AxiosApi = axios.create({
 });
 
 const useDelete = () => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 

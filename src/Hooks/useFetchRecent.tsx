@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
 
 interface Folder{
@@ -11,7 +11,6 @@ interface Folder{
   }
   
   interface Note{
-    note: {
         id: string,
         folderId: string,
         title: string,
@@ -22,7 +21,7 @@ interface Folder{
         updatedAt: string,
         deletedAt: null|string,
         folder: Folder
-  }}
+  }
 
   interface Recent{
       recentNotes: Array<Note>
@@ -36,7 +35,7 @@ interface Folder{
 const useFetchRecent = () => {
     const [data, setData] = useState<Recent|null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<any>(null);
+    const [error, setError] = useState<Error>();
 
     const fetchRecent =useCallback(async()=>{
         setLoading(true);
@@ -44,7 +43,7 @@ const useFetchRecent = () => {
             const response = await AxiosApi.get("/notes/recent");
             setData(response.data);
         }catch(err){
-            setError(err);
+            setError(err as Error);
         }finally{
             setLoading(false);
         }

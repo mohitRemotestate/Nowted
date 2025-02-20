@@ -46,7 +46,7 @@ useEffect(()=>{
 
   if (error) {
     return (<>
-    <p className="text-red-500">{error}</p>;
+    <p className="text-red-500">{error.message}</p>;
     <ToastContainer
       position="top-center"
       autoClose={5000}
@@ -68,7 +68,7 @@ useEffect(()=>{
       <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
       {data?.recentNotes?.length > 0 ? (
         <ul>
-          {data.recentNotes.map((rec: any) => (
+          {data.recentNotes.map((rec) => (
             <NavLink
               to={`/folder/${rec.folder?.id}/note/${rec.id}`}
               key={rec.id}

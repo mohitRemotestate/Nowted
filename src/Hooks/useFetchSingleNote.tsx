@@ -35,7 +35,7 @@ function useFetchSingleNote(){
 
     const [data, setData] = useState<Note | null>(null)
     const [loading, setLoading]= useState(false)
-    const [error,setError] = useState<any>(null);
+    const [error,setError] = useState<Error>();
     const {noteId} = useParams();
     
     const fetchSingleNote = useCallback(async()=>{
@@ -45,7 +45,7 @@ function useFetchSingleNote(){
             const response = await AxiosApi.get(`/notes/${noteId}`);
             setData(response.data);
         } catch(err){
-            setError(err)
+            setError(err as Error)
         } finally{
             setLoading(false);
         }

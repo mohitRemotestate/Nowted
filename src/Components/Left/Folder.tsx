@@ -89,42 +89,44 @@ function Folders() {
       </div>
       <ul className="flex flex-col overflow-y-auto h-50 scrl">
 
-        {folder.data?.folders?.map((f:any) => (
-          isNav && selectedId == f.id ? (
-            <div className="list" key={f.id}>
-              <img className='w-5 h-5' src={fc} alt="Folder Icon" />
-              <input
-                type="text"
-                value={folderName}
-                onChange={(e) => setFolderName(e.target.value)}
-                onBlur={() => saveName(f.id,f.name)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    saveName(f.id,f.name);
-                  }
-                }}
-                autoFocus
-                className="text-white w-full"
-              />
-            </div>
-          ) : (
-            <NavLink
-              to={`/folder/${f.id}`}
-              key={f.id}
-              className={`list ${f.id === folderId ? "activeFolder" : "hover:bg-gray-600"}`}
-              onDoubleClick={() => changeName(f.id,f.name)}
-            >
-              <img className='w-5 h-5' src={fc} alt="Folder Icon" />
-              <p className='truncate'>{f.name}</p>
-            </NavLink>)
-        ))}
+      {folder.data?.folders?.filter((f) => f !== null).map((f) => (
+  isNav && selectedId === f.id ? (
+    <div className="list" key={f.id}>
+      <img className="w-5 h-5" src={fc} alt="Folder Icon" />
+      <input
+        type="text"
+        value={folderName}
+        onChange={(e) => setFolderName(e.target.value)}
+        onBlur={() => saveName(f.id, f.name)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            saveName(f.id, f.name);
+          }
+        }}
+        autoFocus
+        className="text-white w-full"
+      />
+    </div>
+  ) : (
+    <NavLink
+      to={`/folder/${f.id}`}
+      key={f.id}
+      className={`list ${f.id === folderId ? "activeFolder" : "hover:bg-gray-600"}`}
+      onDoubleClick={() => changeName(f.id, f.name)}
+    >
+      <img className="w-5 h-5" src={fc} alt="Folder Icon" />
+      <p className="truncate">{f.name}</p>
+    </NavLink>
+  )
+))}
+
       </ul>
     </div>
     </>
   );
 
   if (folder.error) {
-    return <p className="text-white">{folder.error}</p>;
+    return <p className="text-white">{folder.error.message}</p>;
   }
 }
 

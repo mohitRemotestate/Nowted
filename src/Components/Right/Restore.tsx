@@ -12,7 +12,7 @@ function Restore(){
     const { noteId } = useParams();
     const navigate = useNavigate();
     const singleNote = useFetchSingleNote();
-    const [noteData, setNoteData] = useState<any>('');
+    const [noteData, setNoteData] = useState(singleNote.data?.note);
 
     useEffect(()=>{
         singleNote.fetchSingleNote();
@@ -24,7 +24,7 @@ function Restore(){
 
     function restoreNote() {
       postData(`/notes/${noteId}/restore`).then(() =>
-        navigate("/folder/trash")
+        navigate(`/folder/${singleNote.data?.note.folder.id}/note/${noteId}`)
       );
     }
 

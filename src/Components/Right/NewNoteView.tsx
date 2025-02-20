@@ -31,7 +31,8 @@ function NewNoteView() {
 
     useEffect(() => {
       if (folderData.data) {
-        const id = folderData.data?.folders?.find((i:any) => {return i.id === folderId});
+        const id = folderData.data?.folders?.find((i) => {
+          if(i) return i.id === folderId});
         if(id) setFolderName(id.name);
       }
     }, [folderData.data]);
