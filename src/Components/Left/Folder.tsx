@@ -9,13 +9,6 @@ import useDelete from '../../Hooks/useDelete';
 import { toast } from 'react-toastify';
 import useFetchFolder from '../../Hooks/useFetchFolder';
 
-// interface Folder{
-//   createdAt:string,
-//   deletedAt: string| null,
-//   id: string,
-//   name: string,
-//   updatedAt:string|null
-// }
 
 function Folders() {
   const { folderId } = useParams();

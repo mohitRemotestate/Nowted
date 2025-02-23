@@ -25,7 +25,7 @@ function Notepad() {
   const [title, setTitle] = useState("");
   const [isArchived, setisArchived] = useState(false);
   const [isFavorite, setIsfavorite] = useState(false);
-  const [popupVisible, setPopupVisible] = useState(false);
+  const [ popupVisible, setPopupVisible] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const navigate = useNavigate();
 
