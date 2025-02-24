@@ -76,7 +76,8 @@ function Mid() {
 
   if (loading)
     return <h1 className="h-22 py-7.5 px-5 text-white">Loading...</h1>;
-  if (data)
+  
+    if (data)
     return (
       <>
         <div className="h-22 py-7.5 px-5">
@@ -89,7 +90,7 @@ function Mid() {
 
           {/* list of items */}
           <div className="flex flex-col gap-8">
-            <ul className="overflow-y-auto h-215.5 scrl py-7.5 flex flex-col gap-2.5">
+            <ul className="overflow-y-auto h-214 scrl py-7.5 flex flex-col gap-2.5">
               {data && data?.notes.length > 0 ? (
                 data &&
                 data?.notes.map((f) => (
@@ -116,8 +117,9 @@ function Mid() {
                 </div>
               )}
             </ul>
+          </div>
 
-            <div className="flex flex-row justify-around">
+          <div className="flex flex-row justify-around ">
               <button
                 type="button"
                 key="prev"
@@ -149,7 +151,6 @@ function Mid() {
                 Next
               </button>
             </div>
-          </div>
         </div>
       </>
     );
