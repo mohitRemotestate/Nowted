@@ -2,17 +2,19 @@ import { useEffect, useState, useContext } from "react";
 import fc from '../../assets/folder-close.svg';
 import folderIcon from '../../assets/add-folder.svg';
 import usePatch from "../../Hooks/usePatch.tsx";
-import { NavLink, useParams } from "react-router-dom";
+import { useNavigate, NavLink, useParams } from "react-router-dom";
 import usePostRequest from "../../Hooks/usePost.tsx";
 import Rerender from '../../Context/Context.ts';
 import useDelete from '../../Hooks/useDelete';
 import { toast } from 'react-toastify';
 import useFetchFolder from '../../Hooks/useFetchFolder';
+import trash from '../../assets/trash.svg'
 
 
 function Folders() {
   const { folderId } = useParams();
   const folder = useFetchFolder();
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState('');
   // const [data, setData] = useState({...folder.data})
   const render = useContext(Rerender)
@@ -36,15 +38,8 @@ function Folders() {
   };
 
   // Patch request to save new folder name
-  const saveName = async (id: string,name: string) => {
-    if (name == "delete") {
-      Delete.deleteData(`folders/${id}`)
-        .then(() => {toast.success("Folder deleted")
-        folder.fetchFolder()})
-        .catch(() => toast.error("error while deleting folder"));
-      return;
-    }
-    try {
+  const saveName = async (id: string) => {
+        try {
       await patchData.patchData(`/folders/${id}`, { name: folderName });
       folder.fetchFolder();
     } catch (error) {
@@ -52,6 +47,15 @@ function Folders() {
     }
     setIsNav(false);
   };
+
+  function deleteFolder(id: string){
+    Delete.deleteData(`folders/${id}`)
+        .then(() => {
+          toast.success("Folder deleted")
+        folder.fetchFolder()
+        navigate("/")})
+        .catch(() => toast.error("error while deleting folder"));
+  }
 
   if (folder.loading) {
     return (
@@ -90,26 +94,30 @@ function Folders() {
         type="text"
         value={folderName}
         onChange={(e) => setFolderName(e.target.value)}
-        onBlur={() => saveName(f.id, f.name)}
+        onBlur={() => saveName(f.id)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            saveName(f.id, f.name);
+            saveName(f.id);
           }
         }}
         autoFocus
         className="text-white w-full"
       />
     </div>
-  ) : (
+  ) : (<>
+    <div className="flex flex-row justify-between pr-4">
     <NavLink
       to={`/folder/${f.id}`}
       key={f.id}
-      className={`list ${f.id === folderId ? "activeFolder" : "hover:bg-gray-600"}`}
+      className={`list w-full ${f.id === folderId ? "activeFolder" : "hover:bg-gray-600"}`}
       onDoubleClick={() => changeName(f.id, f.name)}
     >
       <img className="w-5 h-5" src={fc} alt="Folder Icon" />
       <p className="truncate">{f.name}</p>
     </NavLink>
+      <img src={trash} className="py-2.5" alt="delete icon" onClick={()=> deleteFolder(f.id)} />
+      </div>
+    </>
   )
 ))}
 

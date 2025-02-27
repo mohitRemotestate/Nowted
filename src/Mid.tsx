@@ -12,8 +12,8 @@ function Mid() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error|undefined>();
   const folderList = useFetchFolder(); //just for folder name
-  const notes = useFetchNote();
-  const [data, setData] = useState(notes.data);
+  const note = useFetchNote();
+  const [data, setData] = useState(note.data); //data of folder list 
   const page = 1;
 
   const [folderName, setFolderName] = useState<string>("");
@@ -59,17 +59,25 @@ function Mid() {
   }, [folderId]);
 
   useEffect(() => {
-    notes.fetchNote(url);
+    note.fetchNote(url);
   }, [url, render.renderRecent]);
 
   useEffect(() => {
-    if (notes.data) {
+    if (note.data) {
       // console.log(notes);
-      setData(notes.data);
-      setLoading(notes.loading);
-      setError(notes.error);
+      setData(note.data);
+
+      // setData((prev)=>{
+      //   if(!prev) return note.data
+      //   return {
+      //     ...prev, 
+      //     notes: [...prev?.notes, ...(note?.data?.notes || [])],
+      //     total: note?.data?.total
+      //   }});
+      setLoading(note.loading);
+      setError(note.error);
     }
-  }, [notes.data, notes.loading, notes.error]);
+  }, [note.data, note.loading, note.error]);
 
   //folder name
   
@@ -77,8 +85,7 @@ function Mid() {
   if (loading)
     return <h1 className="h-22 py-7.5 px-5 text-white">Loading...</h1>;
   
-    if (data)
-    return (
+    if (data) return (
       <>
         <div className="h-22 py-7.5 px-5">
           {/* folder name */}
@@ -90,7 +97,7 @@ function Mid() {
 
           {/* list of items */}
           <div className="flex flex-col gap-8">
-            <ul className="overflow-y-auto h-214 scrl py-7.5 flex flex-col gap-2.5">
+            <ul className="overflow-y-auto h-212 scrl py-7.5 flex flex-col gap-2.5">
               {data && data?.notes.length > 0 ? (
                 data &&
                 data?.notes.map((f) => (
@@ -140,7 +147,7 @@ function Mid() {
                 key="next"
                 onClick={() => {
                   // console.log(url.page)
-                  if (url.page < Math.ceil(data.total / 10)) {
+                  if (url.page < Math.ceil(data?.total / 10)) {
                     const page = url.page;
                     setUrl({ ...url, page: page + 1 });
                     // console.log(url.page)
