@@ -156,7 +156,6 @@ function Notepad() {
                     if (e.key === "Enter") saveNotepad();
                   }}
                   // onBlur={saveNotepad}
-                  autoFocus
                   className="text-white text-4xl font-bold h-10 w-full focus:outline-none"
                 />
               ) : (
@@ -234,7 +233,6 @@ function Notepad() {
                   }
                 }}
                 // onBlur={saveNotepad}
-                autoFocus
                 className="text-white focus:outline-none h-full w-full"
               />
             </div>
