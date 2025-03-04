@@ -10,7 +10,7 @@ function Mid() {
   // const [notes, setNotes] = useState([]);
   // const [isloading, setLoading] = useState<boolean>(true);
   // const [iserror, setError] = useState<Error | undefined>();
-  const folderList = useFetchFolder(); //just for folder name
+  const {data: folderListData, fetchFolder:folderListFetchFolder} = useFetchFolder(); //just for folder name
   const { data: NoteData, loading, error, fetchNote } = useFetchNote();
   const [data, setData] = useState<Note[]>([]); //data of folder list
   const [page, setPage] = useState(1);
@@ -33,8 +33,8 @@ function Mid() {
   // );
 
   useEffect(() => {
-    folderList.fetchFolder();
-  }, [folderId, render.renderRecent]);
+    folderListFetchFolder();
+  }, [folderId, folderListFetchFolder, render.renderRecent]);
 
   //folder name
   useEffect(() => {
@@ -45,14 +45,14 @@ function Mid() {
         setFolderName("Favorite");
       } else if (folderId === "archived") {
         setFolderName("Archived Notes");
-      } else if (folderList.data) {
-        const id = folderList.data.folders.find((i) => i?.id === folderId);
+      } else if (folderListData) {
+        const id = folderListData.folders.find((i) => i?.id === folderId);
         setFolderName(id ? id.name : "");
       }
     } else {
       setFolderName("All Files");
     }
-  }, [folderId, folderList]);
+  }, [folderId, folderListData]);
 
   useEffect(() => {
     setUrl({

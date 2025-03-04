@@ -11,20 +11,20 @@ function Restore(){
     const { postData } = usePostRequest();
     const { noteId } = useParams();
     const navigate = useNavigate();
-    const singleNote = useFetchSingleNote();
-    const [noteData, setNoteData] = useState(singleNote.data?.note);
+    const {fetchSingleNote,data,error} = useFetchSingleNote();
+    const [noteData, setNoteData] = useState(data?.note);
 
     useEffect(()=>{
-        singleNote.fetchSingleNote();
-    },[noteId])
+        fetchSingleNote();
+    },[noteId,fetchSingleNote])
 
     useEffect(()=>{
-        setNoteData(singleNote?.data?.note)
-    },[singleNote.data])
+        setNoteData(data?.note)
+    },[data])
 
     function restoreNote() {
       postData(`/notes/${noteId}/restore`).then(() =>
-        navigate(`/folder/${singleNote.data?.note.folder.id}/note/${noteId}`)
+        navigate(`/folder/${data?.note.folder.id}/note/${noteId}`)
       );
     }
 
@@ -53,7 +53,7 @@ function Restore(){
         </div>
       </>
     );
-    else if(singleNote.error){
+    else if(error){
         <div className="h-full w-full flex flex-col gap-2.5 text-white text-3xl justify-center items-center">
             Got Error.... please Refresh
         </div>

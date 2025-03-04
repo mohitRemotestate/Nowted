@@ -19,8 +19,8 @@ const MainSideBar: React.FC = () => {
   const [isSearch, setIsSearch] = useState(false);
   const navigate = useNavigate();
   const [searchRequest, setSearchRequest] = useState('');
-  const fetchSearchList = useFetchNote();
-  const [srchList, setSrchList] = useState(fetchSearchList.data);
+  const {data:fetchSearchListData, fetchNote: fetchSearchListFetchNote} = useFetchNote();
+  const [srchList, setSrchList] = useState(fetchSearchListData);
   const debounce = useDebounce(searchRequest);
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
@@ -48,15 +48,15 @@ const MainSideBar: React.FC = () => {
    
   useEffect(()=>{
     if(debounce){
-      fetchSearchList.fetchNote({debounce}).then(()=>setSrchList(fetchSearchList.data))
+      fetchSearchListFetchNote({debounce}).then(()=>setSrchList(fetchSearchListData))
     }
     else setSrchList(null);
     // console.log(srchList);
-  },[debounce])
+  },[debounce, fetchSearchListData, fetchSearchListFetchNote])
 
   useEffect(()=>{
 
-  },[fetchSearchList.data])
+  },[fetchSearchListData])
 
   const ReadingSearchInput = (e:React.ChangeEvent<HTMLInputElement>) => {
     setSearchRequest(e.target.value);

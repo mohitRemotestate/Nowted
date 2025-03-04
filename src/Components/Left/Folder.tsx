@@ -12,7 +12,7 @@ import trash from "../../assets/trash.svg";
 
 function Folders() {
   const { folderId } = useParams();
-  const folder = useFetchFolder();
+  const {fetchFolder,data:folderData, error: folderError, loading:folderLoading} = useFetchFolder();
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState("");
   // const [data, setData] = useState({...folder.data})
@@ -25,8 +25,8 @@ function Folders() {
 
   // Fetch folders only once when component mounts
   useEffect(() => {
-    folder.fetchFolder();
-  }, [render.renderRecent]);
+    fetchFolder();
+  }, [fetchFolder, render.renderRecent]);
 
   const changeName = (id: string, name: string) => {
     setFolderName(name);
@@ -38,7 +38,7 @@ function Folders() {
   const saveName = async (id: string) => {
     try {
       await patchData.patchData(`/folders/${id}`, { name: folderName });
-      folder.fetchFolder();
+      fetchFolder();
     } catch (e) {
       console.log(e);
       toast.error("Error while changing folder name");
@@ -50,13 +50,13 @@ function Folders() {
     Delete.deleteData(`folders/${id}`)
       .then(() => {
         toast.success("Folder deleted");
-        folder.fetchFolder();
+        fetchFolder();
         navigate("/");
       })
       .catch(() => toast.error("error while deleting folder"));
   }
 
-  if (folder.loading) {
+  if (folderLoading) {
     return (
       <div className="py-7.5 h-54">
         <div className="px-5 font-semibold text-white h-6.5 pb-2">Folders</div>
@@ -65,7 +65,7 @@ function Folders() {
     );
   }
 
-  if (folder.data)
+  if (folderData)
     return (
       <div className="flex flex-1 overflow-hidden w-full">
         <div className="flex flex-col w-full">
@@ -79,14 +79,14 @@ function Folders() {
                 postData("/folders", { name: "New Folder" })
                   .then(() => {
                     toast.success("Folder created");
-                    folder.fetchFolder();
+                    fetchFolder();
                   })
                   .catch(() => toast.error("Error while creating folder"));
               }}
             />
           </div>
           <ul className="flex flex-col overflow-y-scroll overflow-x-hidden h-14/15 scrl">
-            {folder.data?.folders
+            {folderData?.folders
               ?.filter((f) => f !== null)
               .map((f) =>
                 isNav && selectedId === f.id ? (
@@ -135,8 +135,8 @@ function Folders() {
       </div>
     );
 
-  if (folder.error) {
-    return <p className="text-white">{folder.error.message}</p>;
+  if (folderError) {
+    return <p className="text-white">{folderError.message}</p>;
   }
 }
 

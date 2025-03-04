@@ -1,5 +1,5 @@
 //toast baki h
-import { useEffect, useState,useContext } from "react";
+import { useEffect, useState,useContext, useCallback } from "react";
 import menu from '../../assets/notepad-menu.svg';
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
@@ -17,8 +17,8 @@ import useFetchFolder from "../../Hooks/useFetchFolder.tsx";
 function Notepad() {
   const { noteId,folderId } = useParams();
   const {data:singleNoteData, fetchSingleNote,loading,error} = useFetchSingleNote();
-  const render = useContext(Rerender);
-  const Patch = usePatch();
+  const {setrenderRecent} = useContext(Rerender);
+  const {patchData} = usePatch();
   const Delete = useDelete();
 
   //data, loading, error
@@ -75,20 +75,12 @@ function Notepad() {
     setPopupVisible((prev) => !prev);
   };
 
-  //DeBouncing funtion
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      saveNotepad();
-    }, 2000);
-    return () => clearTimeout(timeout);
-  }, [content, title]);
-
   const handleOptionClick = async (option: string) => {
     if(singleNoteData){
     switch (option) {
       case "Archived":
         { const updatedArchive = !isArchived;
-        await Patch.patchData(`notes/${singleNoteData.note.id}`, {
+        await patchData(`notes/${singleNoteData.note.id}`, {
           title,
           content,
           isArchived: updatedArchive,
@@ -99,20 +91,20 @@ function Notepad() {
           navigate(`/folder/${folderId}`)
         }});
         setisArchived(updatedArchive);
-        render.setrenderRecent((prev: boolean) => !prev);
+        setrenderRecent((prev: boolean) => !prev);
         
         break;
         }
       case "Favorite":
         {const updatedFavorite = !isFavorite;
         console.log("Fav:" + isFavorite);
-        Patch.patchData(`notes/${singleNoteData.note.id}`, {
+        patchData(`notes/${singleNoteData.note.id}`, {
           title,
           content,
           isFavorite: updatedFavorite, //added title and content so that these become extra button to save data
         });
         setIsfavorite(updatedFavorite);
-        render.setrenderRecent((prev: boolean) => !prev);
+        setrenderRecent((prev: boolean) => !prev);
         break;}
 
       case "Delete": {
@@ -129,13 +121,14 @@ function Notepad() {
 
   const deleteNoteById = async () => {
     await Delete.deleteData(`notes/${noteId}`).then(() =>
-    {render.setrenderRecent(prev=>!prev)
+    {setrenderRecent(prev=>!prev)
       navigate(`/folder/trash/note/${noteId}`)}
     );
   };
 
-  function saveNotepad() {
-    Patch.patchData(`notes/${noteId}`, {
+
+  const saveNotepad = useCallback(() => {
+    patchData(`notes/${noteId}`, {
       title,
       content,
       isArchived,
@@ -143,12 +136,21 @@ function Notepad() {
     })
       .then(() => {
         setIsEditable(false);
-        render.setrenderRecent(prev => !prev)
+        setrenderRecent((prev) => !prev);
       })
       .catch((error) => {
         console.error("Error updating note:", error);
       });
-  }
+  }, [patchData, noteId, title, content, isArchived, isFavorite, setrenderRecent]);
+  
+
+  //DeBouncing funtion
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      saveNotepad();
+    }, 2000);
+    return () => clearTimeout(timeout);
+  }, [content, saveNotepad, title]);
 
   function handleFolderChangeMenu(){
     // console.log(folders)
@@ -157,7 +159,7 @@ function Notepad() {
 
   function ChangeFolder(id:string){
     // console.log(id)
-    Patch.patchData(`notes/${noteId}`,{
+    patchData(`notes/${noteId}`,{
       folderId: id,
     }).then(()=>navigate(`/folder/${id}/note/${noteId}`))
     setIsChangeFolderVisible(prev=> !prev)
@@ -229,39 +231,42 @@ function Notepad() {
             {/* Date and Folder */}
             <div className="h-17 flex flex-col justify-between">
               <div className="flex flex-row justify-between w-53 text-white h-18px">
-                  <div className="flex flex-row gap-2 h-4.5">
-                <img src={calender} alt="calendar" />
-                <div>Date   </div>
-                <div>{date}</div>
+                <div className="flex flex-row gap-2 h-4.5">
+                  <img src={calender} alt="calendar" />
+                  <div>Date </div>
+                  <div>{date}</div>
                 </div>
               </div>
               <div className="border-2 border-b-white" />
               <div className="flex flex-row justify-left text-white h-4.5 gap-2">
                 <div className="flex flex-row gap-2 h-4.5">
-                <img src={ficon} alt="folder icon" />
-                <div>Folder</div>
+                  <img src={ficon} alt="folder icon" />
+                  <div>Folder</div>
                 </div>
-                  <div className="text-white"
-                    onClick={handleFolderChangeMenu}>
-                    {singleNoteData.note.folder.name}
-                  </div>
-                {
-                  (isChangeFolderVisible && folders &&
-                    <div className="folderListContainer absolute top-45">
-                        <ul className=" scrl px-2 flex flex-col gap-0.5 border-2 border-white w-40 overflow-x-hidden overflow-y-auto bg-black">
-                          {folders.folders.filter((f)=> f !==null).map((f)=>(
-                            <li key={f.id}>
-                            <button 
-                            onClick={()=>ChangeFolder(f.id)}
-                            className="border-2 border-white">
+                <div className="text-white" onClick={handleFolderChangeMenu}>
+                  {singleNoteData.note.folder.name}
+                </div>
+                {/* change folder */}
+                {isChangeFolderVisible && folders && (
+                  <div
+                    className="folderListContainer absolute h-80 w-70 overflow-auto top-45 left-1/2 transform -translate-x-1/2 bg-black p-2 rounded-md shadow-lg"
+                  >
+                    <ul className="px-2 flex flex-col gap-0.5 border-2 border-white w-full overflow-x-hidden bg-black scrl">
+                      {folders.folders
+                        .filter((f) => f !== null)
+                        .map((f) => (
+                          <li key={f.id}>
+                            <button
+                              onClick={() => ChangeFolder(f.id)}
+                              className="border-2 border-white w-full text-white"
+                            >
                               {f.name}
                             </button>
-                            </li>
-                          ))}
-                        </ul>
-                    </div>
-                  )
-                }
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
 
