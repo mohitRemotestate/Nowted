@@ -42,7 +42,7 @@ function Folders() {
         try {
       await patchData.patchData(`/folders/${id}`, { name: folderName });
       folder.fetchFolder();
-    } catch (error) {
+    } catch (err) {
       toast.error("Error while changing folder name")
     }
     setIsNav(false);
