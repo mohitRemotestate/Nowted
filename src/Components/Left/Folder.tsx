@@ -84,7 +84,7 @@ function Folders() {
           }
         />
       </div>
-      <ul className="flex flex-col overflow-y-auto overflow-x-hidden h-60 scrl">
+      <ul className="flex flex-col overflow-y-scroll overflow-x-hidden h-60 scrl">
 
       {folder.data?.folders?.filter((f) => f !== null).map((f) => (
   isNav && selectedId === f.id ? (
