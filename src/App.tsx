@@ -7,17 +7,18 @@ import Rerender from "./Context/Context";
 
 const App: React.FC = () => {
   const [renderRecent, setrenderRecent] = useState<boolean>(false);
+  const [folderName, setFolderName] = useState("")
 
   return (
-    <Rerender.Provider value={{ renderRecent, setrenderRecent }}>
-      <div className="flex flex-row">
-        <div className="flex flex-col w-1/5 h-screen bg-left">
+    <Rerender.Provider value={{ renderRecent, setrenderRecent,folderName,setFolderName }}>
+      <div className="flex flex-row max-h-screen">
+        <div className="flex flex-col w-1/5 bg-left">
           <MainSideBar />
         </div>
         <div className="w-1/4 h-screen bg-mid">
           <Mid />
         </div>
-        <div className="w-full h-screen bg-left">
+        <div className="w-11/20 h-screen bg-left">
           <Right />
         </div>
       </div>

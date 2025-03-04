@@ -22,6 +22,21 @@ const MainSideBar: React.FC = () => {
   const fetchSearchList = useFetchNote();
   const [srchList, setSrchList] = useState(fetchSearchList.data);
   const debounce = useDebounce(searchRequest);
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    //condition of not closing searchbar
+    if (target.closest(".searchListContainer")) {
+      return;
+    }
+    setIsSearch(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const handleClick = () => {
     if (folderId && !['trash', 'favorite', 'archived'].includes(folderId)) {
@@ -36,26 +51,29 @@ const MainSideBar: React.FC = () => {
       fetchSearchList.fetchNote({debounce}).then(()=>setSrchList(fetchSearchList.data))
     }
     else setSrchList(null);
-    console.log(srchList);
+    // console.log(srchList);
   },[debounce])
 
   useEffect(()=>{
 
   },[fetchSearchList.data])
 
-  const ReadingSearchInput = (e: any) => {
+  const ReadingSearchInput = (e:React.ChangeEvent<HTMLInputElement>) => {
     setSearchRequest(e.target.value);
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col max-h-screen">
       <div className="flex justify-between px-5 py-7.5">
         <img src={logo} />
-        <img src={searchIcon} onClick={() => setIsSearch((p) => !p)} />
+        <img 
+        src={searchIcon} 
+        className='searchListContainer'
+        onClick={() => setIsSearch((p) => !p)} />
       </div>
 
       {/* Search and new file */}
-      <div className="px-5" id="isSearch">
+      <div className="searchListContainer px-5" id="isSearch">
         {isSearch ? (
           <div className="border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10 w-full">
             <div>
@@ -70,12 +88,16 @@ const MainSideBar: React.FC = () => {
             />
             {
               
-              <div className="searchListContainer scrl absolute top-35 left-0 w-50 bg-gray-800 text-white rounded-md shadow-lg overflow-y-auto max-h-42 ">
+              <div className="searchListContainer scrl absolute top-35 left-0 w-50 bg-gray-800 text-white rounded-md shadow-lg overflow-y-auto overflow-x-hidden max-h-42 ">
                 <ul>
                   {srchList?.notes.map((i) => (
                     <NavLink
                       to={`/folder/${i.folder.id}/note/${i.id}`}
                       key={i.id}
+                      onClick={()=>{
+                        const prev = !isSearch;
+                        setIsSearch(prev);
+                      }}
                       className="block px-4 py-2 hover:bg-gray-700"
                     >
                       {i.title}

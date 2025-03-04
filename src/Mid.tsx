@@ -1,4 +1,4 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect,useContext,useMemo } from "react";
 import useFetchNote from "./Hooks/useFetchNote";
 import { NavLink, useParams } from "react-router-dom";
 import Rerender from './Context/Context';
@@ -8,7 +8,7 @@ import useFetchFolder from "./Hooks/useFetchFolder";
 function Mid() {
   const { folderId, noteId } = useParams();
   const render = useContext(Rerender);
-
+  // const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error|undefined>();
   const folderList = useFetchFolder(); //just for folder name
@@ -25,7 +25,13 @@ function Mid() {
     limit: 10,
   });
 
+//to fetch the list of folder
+  // const folderList = useFetchFolder();
+  const folderListMemoized = useMemo(() => folderList, [folderId, render.renderRecent]);
 
+  useEffect(() => {
+    folderListMemoized.fetchFolder();
+  }, [folderId, render.renderRecent,folderListMemoized]);
   //folder name
   useEffect(() => {
     if (folderId) {
@@ -45,10 +51,6 @@ function Mid() {
   }, [folderId, folderList]);
 
   useEffect(() => {
-    folderList.fetchFolder();
-  }, [folderId, render.renderRecent]);
-
-  useEffect(() => {
     setUrl({
       ...url,
       favorite: folderId == "favorite" ? true : undefined,
@@ -66,6 +68,7 @@ function Mid() {
     if (note.data) {
       // console.log(notes);
       setData(note.data);
+
 
       // setData((prev)=>{
       //   if(!prev) return note.data
@@ -87,7 +90,7 @@ function Mid() {
   
     if (data) return (
       <>
-        <div className="h-22 py-7.5 px-5">
+        <div className="w-full h-22 py-7.5 px-5">
           {/* folder name */}
           <div className="w-75 h-7  border- ">
             <p className="text-white font-sens  font-semibold h-7 text-2xl ">
@@ -127,7 +130,9 @@ function Mid() {
           </div>
 
           <div className="flex flex-row justify-around ">
-              <button
+              
+              
+              {/* <button
                 type="button"
                 key="prev"
                 onClick={() => {
@@ -156,7 +161,7 @@ function Mid() {
                 className="text-white border-purple-900 border-2 bg-purple-800 rounded-xl p-3"
               >
                 Next
-              </button>
+              </button> */}
             </div>
         </div>
       </>

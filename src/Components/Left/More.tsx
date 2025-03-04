@@ -4,11 +4,11 @@ import trash from '../../assets/trash.svg'
 import { NavLink } from 'react-router-dom'
 
 
-function More({}){
+function More(){
 
 
     return(
-        <div>
+        <div className='py-4'>
     <div className='px-5 font-semibold text-white h-6.5 pb-2 '>More</div>
     <ul>
           <NavLink to={`/folder/favorite`} key="1" className='list hover:bg-gray-600' ><img src={star} /> favorites</NavLink>

@@ -67,7 +67,7 @@ function Folders() {
   }
 
   if(folder.data) return (<>
-    <div className='flex flex-col flex-1 h-fit'>
+    <div className='flex flex-col'>
       <div className='px-5 pb-2 font-semibold text-white h-6.5 flex flex-row justify-between'>
         Folders 
         <img
@@ -84,7 +84,7 @@ function Folders() {
           }
         />
       </div>
-      <ul className="flex flex-col overflow-y-auto h-50 scrl">
+      <ul className="flex flex-col overflow-y-auto overflow-x-hidden h-60 scrl">
 
       {folder.data?.folders?.filter((f) => f !== null).map((f) => (
   isNav && selectedId === f.id ? (
@@ -120,7 +120,6 @@ function Folders() {
     </>
   )
 ))}
-
       </ul>
     </div>
     </>
