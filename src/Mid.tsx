@@ -15,6 +15,7 @@ function Mid() {
   const note = useFetchNote();
   const [data, setData] = useState(note.data); //data of folder list 
   const page = 1;
+  // const folder = useFetchFolder();
 
   const [folderName, setFolderName] = useState<string>("");
   const [url, setUrl] = useState({

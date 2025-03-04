@@ -11,6 +11,7 @@ import archiveNote from "../../assets/archivedNotepad.svg"
 import useDelete from "../../Hooks/useDelete.tsx";
 import Rerender from '../../Context/Context';
 import useFetchSingleNote from '../../Hooks/useFetchSingleNote.tsx';
+import useFetchFolder from "../../Hooks/useFetchFolder.tsx";
 
 
 function Notepad() {
@@ -28,10 +29,16 @@ function Notepad() {
   const [ popupVisible, setPopupVisible] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const navigate = useNavigate();
+  const {fetchFolder,data:folders} = useFetchFolder();
+  const [isChangeFolderVisible, setIsChangeFolderVisible] = useState(false);
 
   useEffect(() => {
     singleNote.fetchSingleNote();
   }, [noteId]);
+
+  useEffect(()=>{
+    fetchFolder();
+  },[fetchFolder])
 
   const date = singleNote.data
     ? new Date(singleNote.data.note.updatedAt).toISOString().split("T")[0]
@@ -86,7 +93,7 @@ function Notepad() {
           content,
           isArchived: updatedArchive,
         }).then(()=>{if(isArchived){
-          console.log("folder should change")
+          // console.log("folder should change")
           navigate(`/folder/${singleNote.data?.note.folderId}/note/${noteId}`)
         }});
         setisArchived(updatedArchive);
@@ -139,6 +146,20 @@ function Notepad() {
       .catch((error) => {
         console.error("Error updating note:", error);
       });
+  }
+
+  function handleFolderChangeMenu(){
+    // console.log(folders)
+    setIsChangeFolderVisible(prev=>!prev)
+  }
+
+  function ChangeFolder(id:string){
+    // console.log(id)
+    Patch.patchData(`notes/${noteId}`,{
+      folderId: id,
+    }).then(()=>navigate(`/folder/${id}/note/${noteId}`))
+    setIsChangeFolderVisible(prev=> !prev)
+
   }
 
   if (singleNote.loading) return <h1 className="text-white">Loading...</h1>;
@@ -218,14 +239,24 @@ function Notepad() {
                 <img src={ficon} alt="folder icon" />
                 <div>Folder</div>
                 </div>
-                  <div className="text-white">
-                    
+                  <div className="text-white"
+                    onClick={handleFolderChangeMenu}>
                     {singleNote.data.note.folder.name}
                   </div>
                 {
-                  (
-                    <div className="folderListContainer absolute ">
-
+                  (isChangeFolderVisible && folders &&
+                    <div className="folderListContainer absolute top-45">
+                        <ul className=" scrl px-2 flex flex-col gap-0.5 border-2 border-white w-40 overflow-x-hidden overflow-y-auto bg-black">
+                          {folders.folders.filter((f)=> f !==null).map((f)=>(
+                            <li key={f.id}>
+                            <button 
+                            onClick={()=>ChangeFolder(f.id)}
+                            className="border-2 border-white">
+                              {f.name}
+                            </button>
+                            </li>
+                          ))}
+                        </ul>
                     </div>
                   )
                 }
