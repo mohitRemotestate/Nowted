@@ -1,37 +1,34 @@
 import { useEffect, useState, useContext } from "react";
-import fc from '../../assets/folder-close.svg';
-import folderIcon from '../../assets/add-folder.svg';
+import fc from "../../assets/folder-close.svg";
+import folderIcon from "../../assets/add-folder.svg";
 import usePatch from "../../Hooks/usePatch.tsx";
 import { useNavigate, NavLink, useParams } from "react-router-dom";
 import usePostRequest from "../../Hooks/usePost.tsx";
-import Rerender from '../../Context/Context.ts';
-import useDelete from '../../Hooks/useDelete';
-import { toast } from 'react-toastify';
-import useFetchFolder from '../../Hooks/useFetchFolder';
-import trash from '../../assets/trash.svg'
-
+import Rerender from "../../Context/Context.ts";
+import useDelete from "../../Hooks/useDelete";
+import { toast } from "react-toastify";
+import useFetchFolder from "../../Hooks/useFetchFolder";
+import trash from "../../assets/trash.svg";
 
 function Folders() {
   const { folderId } = useParams();
   const folder = useFetchFolder();
   const navigate = useNavigate();
-  const [selectedId, setSelectedId] = useState('');
+  const [selectedId, setSelectedId] = useState("");
   // const [data, setData] = useState({...folder.data})
-  const render = useContext(Rerender)
+  const render = useContext(Rerender);
   const [isNav, setIsNav] = useState(false);
-  const [folderName, setFolderName] = useState('New Folder'); 
+  const [folderName, setFolderName] = useState("New Folder");
   const patchData = usePatch();
   const { postData } = usePostRequest();
   const Delete = useDelete();
-  
 
   // Fetch folders only once when component mounts
   useEffect(() => {
     folder.fetchFolder();
-  }, [render.renderRecent]); 
+  }, [render.renderRecent]);
 
-
-  const changeName = (id: string,name: string) => {
+  const changeName = (id: string, name: string) => {
     setFolderName(name);
     setIsNav(true);
     setSelectedId(id);
@@ -39,92 +36,104 @@ function Folders() {
 
   // Patch request to save new folder name
   const saveName = async (id: string) => {
-        try {
+    try {
       await patchData.patchData(`/folders/${id}`, { name: folderName });
       folder.fetchFolder();
-    } catch (err) {
-      toast.error("Error while changing folder name")
+    } catch (e) {
+      console.log(e);
+      toast.error("Error while changing folder name");
     }
     setIsNav(false);
   };
 
-  function deleteFolder(id: string){
+  function deleteFolder(id: string) {
     Delete.deleteData(`folders/${id}`)
-        .then(() => {
-          toast.success("Folder deleted")
-        folder.fetchFolder()
-        navigate("/")})
-        .catch(() => toast.error("error while deleting folder"));
+      .then(() => {
+        toast.success("Folder deleted");
+        folder.fetchFolder();
+        navigate("/");
+      })
+      .catch(() => toast.error("error while deleting folder"));
   }
 
   if (folder.loading) {
     return (
-      <div className='py-7.5 h-54'>
-        <div className='px-5 font-semibold text-white h-6.5 pb-2'>Folders</div>
-        <p className='text-white'>Loading...</p>
+      <div className="py-7.5 h-54">
+        <div className="px-5 font-semibold text-white h-6.5 pb-2">Folders</div>
+        <p className="text-white">Loading...</p>
       </div>
     );
   }
 
-  if(folder.data) return (<>
-    <div className='flex flex-col'>
-      <div className='px-5 pb-2 font-semibold text-white h-6.5 flex flex-row justify-between'>
-        Folders 
-        <img
-          src={folderIcon}
-          alt="Add Folder"
-          className="cursor-pointer"
-          onClick={ () => {
-            postData('/folders', { name: "New Folder" })
-              .then(() => {
-                toast.success('Folder created')
-                folder.fetchFolder()})
-              .catch(() => toast.error("Error while creating folder"));
-          }
-          }
-        />
+  if (folder.data)
+    return (
+      <div className="flex flex-1 overflow-hidden w-full">
+        <div className="flex flex-col w-full">
+          <div className="px-5 pb-2 font-semibold text-white h-1/15 flex flex-row justify-between">
+            <p>Folders</p>
+            <img
+              src={folderIcon}
+              alt="Add Folder"
+              className="cursor-pointer"
+              onClick={() => {
+                postData("/folders", { name: "New Folder" })
+                  .then(() => {
+                    toast.success("Folder created");
+                    folder.fetchFolder();
+                  })
+                  .catch(() => toast.error("Error while creating folder"));
+              }}
+            />
+          </div>
+          <ul className="flex flex-col overflow-y-scroll overflow-x-hidden h-14/15 scrl">
+            {folder.data?.folders
+              ?.filter((f) => f !== null)
+              .map((f) =>
+                isNav && selectedId === f.id ? (
+                  <li className="list" key={f.id}>
+                    <img className="w-5 h-5" src={fc} alt="Folder Icon" />
+                    <input
+                      type="text"
+                      value={folderName}
+                      onChange={(e) => setFolderName(e.target.value)}
+                      onBlur={() => saveName(f.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          saveName(f.id);
+                        }
+                      }}
+                      autoFocus
+                      className="text-white w-full"
+                    />
+                  </li>
+                ) : (
+                  <div
+                    className="flex flex-row justify-between pr-4"
+                    key={f.id}
+                  >
+                    <NavLink
+                      to={`/folder/${f.id}`}
+                      className={`list w-full ${
+                        f.id === folderId ? "activeFolder" : "hover:bg-gray-600"
+                      }`}
+                      onDoubleClick={() => changeName(f.id, f.name)}
+                    >
+                      <img className="w-5 h-5" src={fc} alt="Folder Icon" />
+                      <p className="truncate">{f.name}</p>
+                    </NavLink>
+                    <img
+                      src={trash}
+                      className="py-2.5"
+                      alt="delete icon"
+                      onClick={() => deleteFolder(f.id)}
+                    />
+                  </div>
+                )
+              )}
+          </ul>
+        </div>
       </div>
-      <ul className="flex flex-col overflow-y-scroll overflow-x-hidden h-60 scrl">
-
-      {folder.data?.folders?.filter((f) => f !== null).map((f) => (
-  isNav && selectedId === f.id ? (
-    <div className="list" key={f.id}>
-      <img className="w-5 h-5" src={fc} alt="Folder Icon" />
-      <input
-        type="text"
-        value={folderName}
-        onChange={(e) => setFolderName(e.target.value)}
-        onBlur={() => saveName(f.id)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            saveName(f.id);
-          }
-        }}
-        autoFocus
-        className="text-white w-full"
-      />
-    </div>
-  ) : (<>
-    <div className="flex flex-row justify-between pr-4">
-    <NavLink
-      to={`/folder/${f.id}`}
-      key={f.id}
-      className={`list w-full ${f.id === folderId ? "activeFolder" : "hover:bg-gray-600"}`}
-      onDoubleClick={() => changeName(f.id, f.name)}
-    >
-      <img className="w-5 h-5" src={fc} alt="Folder Icon" />
-      <p className="truncate">{f.name}</p>
-    </NavLink>
-      <img src={trash} className="py-2.5" alt="delete icon" onClick={()=> deleteFolder(f.id)} />
-      </div>
-    </>
-  )
-))}
-
-      </ul>
-    </div>
-    </>
-  );
+    );
 
   if (folder.error) {
     return <p className="text-white">{folder.error.message}</p>;
@@ -132,6 +141,3 @@ function Folders() {
 }
 
 export default Folders;
-
-
-

@@ -1,38 +1,41 @@
-import { useState, useEffect,useContext,useMemo } from "react";
-import useFetchNote from "./Hooks/useFetchNote";
+import { useState, useEffect, useContext } from "react";
+import useFetchNote, { Note } from "./Hooks/useFetchNote";
 import { NavLink, useParams } from "react-router-dom";
-import Rerender from './Context/Context';
+import Rerender from "./Context/Context";
 import useFetchFolder from "./Hooks/useFetchFolder";
-
 
 function Mid() {
   const { folderId, noteId } = useParams();
   const render = useContext(Rerender);
   // const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error|undefined>();
+  // const [isloading, setLoading] = useState<boolean>(true);
+  // const [iserror, setError] = useState<Error | undefined>();
   const folderList = useFetchFolder(); //just for folder name
-  const note = useFetchNote();
-  const [data, setData] = useState(note.data); //data of folder list 
-  const page = 1;
-  // const folder = useFetchFolder();
+  const { data: NoteData, loading, error, fetchNote } = useFetchNote();
+  const [data, setData] = useState<Note[]>([]); //data of folder list
+  const [page, setPage] = useState(1);
+  const [totalItem, setTotalItem] = useState(NoteData?.total);
+  // const midNoteList = [...note.data?.notes];
 
   const [folderName, setFolderName] = useState<string>("");
   const [url, setUrl] = useState({
-    favorite: undefined as boolean | undefined,
-    archived: false,
-    deleted: false,
-    page: 1,
-    limit: 10,
+    // favorite: undefined as boolean | undefined,
+    // archived: false,
+    // deleted: false,
+    // page: 1,
+    // limit: 10,
   });
 
-//to fetch the list of folder
-  // const folderList = useFetchFolder();
-  const folderListMemoized = useMemo(() => folderList, [folderId, render.renderRecent]);
+  //to fetch the list of folder
+  // const folderListMemoized = useMemo(
+  //   () => folderList,
+  //   [folderId, render.renderRecent]
+  // );
 
   useEffect(() => {
-    folderListMemoized.fetchFolder();
-  }, [folderId, render.renderRecent,folderListMemoized]);
+    folderList.fetchFolder();
+  }, [folderId, render.renderRecent]);
+
   //folder name
   useEffect(() => {
     if (folderId) {
@@ -53,43 +56,62 @@ function Mid() {
 
   useEffect(() => {
     setUrl({
-      ...url,
       favorite: folderId == "favorite" ? true : undefined,
       archived: folderId == "archived" ? true : false,
       deleted: folderId == "trash" ? true : false,
       page,
+      limit: 10,
     });
-  }, [folderId]);
+    setData([]);
+  }, [folderId, page]);
 
   useEffect(() => {
-    note.fetchNote(url);
-  }, [url, render.renderRecent]);
+    fetchNote(url);
+  }, [url, render.renderRecent, fetchNote]);
 
   useEffect(() => {
-    if (note.data) {
-      // console.log(notes);
-      setData(note.data);
+    if (NoteData) {
+      setTotalItem(NoteData.total);
+      console.log("Page: " + page);
+      // if (page === 1) setData(NoteData.notes);
+      // else {
+      //   setData((prev) => {
+      //     return [...prev, ...(NoteData ? NoteData.notes : [])];
+      //   });
+      // }
+      setData((prev) => {
+        // if (prev.length === 0) {
+        //   return NoteData ? NoteData.notes : [];
+        // } else {
+        //   return [...prev, ...(NoteData ? NoteData.notes : [])];
+        // }
 
+        const newNotes = NoteData ? NoteData.notes : [];
 
-      // setData((prev)=>{
-      //   if(!prev) return note.data
-      //   return {
-      //     ...prev, 
-      //     notes: [...prev?.notes, ...(note?.data?.notes || [])],
-      //     total: note?.data?.total
-      //   }});
-      setLoading(note.loading);
-      setError(note.error);
+        // Combine the current notes and new ones
+        const combinedNotes = [...prev, ...newNotes];
+
+        // Filter to keep only unique notes based on the `id`
+        const uniqueNotes = combinedNotes.filter(
+          (note, index, self) =>
+            index === self.findIndex((n) => n.id === note.id)
+        );
+
+        return uniqueNotes;
+      });
+      console.log(NoteData.notes);
+      // setLoading(note.loading);
+      // setError(note.error);
     }
-  }, [note.data, note.loading, note.error]);
+  }, [NoteData, page]);
 
   //folder name
-  
 
   if (loading)
     return <h1 className="h-22 py-7.5 px-5 text-white">Loading...</h1>;
-  
-    if (data) return (
+
+  if (data)
+    return (
       <>
         <div className="w-full h-22 py-7.5 px-5">
           {/* folder name */}
@@ -102,38 +124,50 @@ function Mid() {
           {/* list of items */}
           <div className="flex flex-col gap-8">
             <ul className="overflow-y-auto h-212 scrl py-7.5 flex flex-col gap-2.5">
-              {data && data?.notes.length > 0 ? (
+              {data && data?.length > 0 ? (
                 data &&
-                data?.notes.map((f) => (
-                  <NavLink
-                    to={`/folder/${folderId}/note/${f.id}`}
-                    key={f.id}
-                    // onClick={ClickActivity}
-                    className={`h-24.5 p-5 text-white flex flex-col gap-2 ${
-                      f.id == noteId ? "activemid" : "mid"
-                    }`}
-                  >
-                    <div className="truncate w-full h-7 font-sans font-semibold text-lg">
-                      {f.title}
-                    </div>
-                    <div className="flex flex-row gap-2.5">
-                      <div>21/06/2022</div>
-                      <div className="truncate">{f.preview}</div>
-                    </div>
-                  </NavLink>
+                data?.map((f) => (
+                  <li key={f.id}>
+                    <NavLink
+                      to={`/folder/${folderId}/note/${f.id}`}
+                      // onClick={ClickActivity}
+                      className={`h-24.5 p-5 text-white flex flex-col gap-2 ${
+                        f.id == noteId ? "activemid" : "mid"
+                      }`}
+                    >
+                      <div className="truncate w-full h-7 font-sans font-semibold text-lg">
+                        {f.title}
+                      </div>
+                      <div className="flex flex-row gap-2.5">
+                        <div>21/06/2022</div>
+                        <div className="truncate">{f.preview}</div>
+                      </div>
+                    </NavLink>
+                  </li>
                 ))
               ) : (
-                <div className=" h-24.5 p-5 text-white w-full font-sans font-semibold text-lg">
+                <div
+                  key={"5"}
+                  className=" h-24.5 p-5 text-white w-full font-sans font-semibold text-lg"
+                >
                   Folder is empty
+                </div>
+              )}
+              {totalItem && totalItem > data.length && (
+                <div className="flex flex-row justify-around ">
+                  <button
+                    className="text-white border-white bg-black border-2 rounded-xl p-3"
+                    onClick={() => {
+                      setPage((pre) => pre + 1);
+                    }}
+                  >
+                    Load More
+                  </button>
                 </div>
               )}
             </ul>
           </div>
-
-          <div className="flex flex-row justify-around ">
-              
-              
-              {/* <button
+          {/* <button
                 type="button"
                 key="prev"
                 onClick={() => {
@@ -163,7 +197,6 @@ function Mid() {
               >
                 Next
               </button> */}
-            </div>
         </div>
       </>
     );

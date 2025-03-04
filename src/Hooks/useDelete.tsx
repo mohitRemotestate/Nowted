@@ -8,12 +8,11 @@ const AxiosApi = axios.create({
 const useDelete = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error>();
 
   const deleteData = useCallback(
     async (endpoint: string, customHeaders?: Record<string, string>) => {
       setLoading(true);
-      setError(null);
 
       try {
         const response = await AxiosApi.delete(endpoint, {
@@ -24,7 +23,7 @@ const useDelete = () => {
         });
         setData(response.data); // Store response data
       } catch (err) {
-        setError('Error deleting the resource');
+        setError(err as Error);
       } finally {
         setLoading(false);
       }

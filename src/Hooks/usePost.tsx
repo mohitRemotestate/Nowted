@@ -5,13 +5,22 @@ const AxiosApi = axios.create({
   baseURL: "https://nowted-server.remotestate.com",
 });
 
+interface postData{
+    folderId?: string,
+    title?: string,
+    content?: string,
+    isFavorite?: boolean,
+    isArchived?: boolean,
+    name?:string
+}
+
 const usePostRequest = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<postData>();
 
   const postData = useCallback(
-    async (endpoint: string, body?: Record<string, any>) => {
+    async (endpoint: string, body?: postData) => {
       setLoading(true);
       setError(null);
       try {

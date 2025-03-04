@@ -17,7 +17,7 @@ const AxiosApi = axios.create({
 const usePatch = () => {
   const [data, setData] = useState<Data|null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error>();
 
   const patchData = useCallback(
     async (url: string, updateData: Data, customHeaders?: Record<string, string>) => {
@@ -32,7 +32,7 @@ const usePatch = () => {
         });
         setData(response.data); 
       } catch (err) {
-        setError('Error updating the note');
+        setError(err as Error);
       } finally {
         setLoading(false);
       }

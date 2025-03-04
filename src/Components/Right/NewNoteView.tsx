@@ -9,6 +9,13 @@ import { toast } from 'react-toastify';
 import useFetchFolder from '../../Hooks/useFetchFolder';
 
 //set that after navigate to in the same file 
+interface Folder{
+  createdAt:string,
+  deletedAt: string| null,
+  id: string,
+  name: string,
+  updatedAt:string|null
+}
 
 function NewNoteView() {
   // setPostRender.setPostrender(prev => !prev)
@@ -20,22 +27,24 @@ function NewNoteView() {
     const [isEditable, setIsEditable] = useState(false);
     const {postData,data,error} = usePostRequest();
     const render = useContext(Rerender);
-    const folderData = useFetchFolder(); //just for folder name
+
+    const {fetchFolder,data:folderData} = useFetchFolder()
+    // const folderData = useFetchFolder(); //just for folder name
 
     const [folderName, setFolderName] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
-      folderData.fetchFolder();
-    }, []);
+      fetchFolder();
+    }, [fetchFolder]);
 
     useEffect(() => {
-      if (folderData.data) {
-        const id = folderData.data?.folders?.find((i) => {
+      if (folderData) {
+        const id = folderData?.folders?.find((i:Folder | null) => {
           if(i) return i.id === folderId});
         if(id) setFolderName(id.name);
       }
-    }, [folderData.data]);
+    }, [folderData,folderId]);
 
     const saveNotepad = async () => {
       const x = await postData("/notes", {

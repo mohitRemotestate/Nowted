@@ -63,70 +63,71 @@ const MainSideBar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col max-h-screen">
-      <div className="flex justify-between px-5 py-7.5">
-        <img src={logo} />
-        <img 
-        src={searchIcon} 
-        className='searchListContainer'
-        onClick={() => setIsSearch((p) => !p)} />
-      </div>
+    <div className="flex flex-col w-1/5 h-full bg-left">
+      <div className="flex flex-col h-2/15">
+        <div className="flex justify-between px-5 py-7.5">
+          <img src={logo} />
+          <img
+            src={searchIcon}
+            className="searchListContainer"
+            onClick={() => setIsSearch((p) => !p)}
+          />
+        </div>
 
-      {/* Search and new file */}
-      <div className="searchListContainer px-5" id="isSearch">
-        {isSearch ? (
-          <div className="border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10 w-full">
-            <div>
-              <img src={srch} />
-            </div>
-            <input
-              type="text"
-              className="border-white rounded-xs text-white w-full focus:outline-none"
-              placeholder="Search note"
-              value={searchRequest}
-              onChange={ReadingSearchInput}
-            />
-            {
-              
-              <div className="searchListContainer scrl absolute top-35 left-0 w-50 bg-gray-800 text-white rounded-md shadow-lg overflow-y-auto overflow-x-hidden max-h-42 ">
-                <ul>
-                  {srchList?.notes.map((i) => (
-                    <NavLink
-                      to={`/folder/${i.folder.id}/note/${i.id}`}
-                      key={i.id}
-                      onClick={()=>{
-                        const prev = !isSearch;
-                        setIsSearch(prev);
-                      }}
-                      className="block px-4 py-2 hover:bg-gray-700"
-                    >
-                      {i.title}
-                    </NavLink>
-                  ))}
-                </ul>
+        {/* Search and new file */}
+        <div className="searchListContainer px-5" id="isSearch">
+          {isSearch ? (
+            <div className="border-natural-800 btn rounded-xs flex flex-row gap-2 p-2.5 h-10 w-full">
+              <div>
+                <img src={srch} />
               </div>
-            }
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={handleClick}
-            className="border-natural-800 rounded-xs btn text-white w-full h-10 font-sans font-semibold"
-          >
-            + New Note
-          </button>
-        )}
+              <input
+                type="text"
+                className="border-white rounded-xs text-white w-full focus:outline-none"
+                placeholder="Search note"
+                value={searchRequest}
+                onChange={ReadingSearchInput}
+              />
+              {
+                <div className="searchListContainer scrl absolute top-35 left-10 w-50 bg-gray-800 text-white rounded-md shadow-lg overflow-y-auto overflow-x-hidden max-h-42 ">
+                  <ul>
+                    {srchList?.notes.map((i) => (
+                      <NavLink
+                        to={`/folder/${i.folder.id}/note/${i.id}`}
+                        key={i.id}
+                        onClick={() => {
+                          const prev = !isSearch;
+                          setIsSearch(prev);
+                        }}
+                        className="block px-4 py-2 hover:bg-gray-700"
+                      >
+                        {i.title}
+                      </NavLink>
+                    ))}
+                  </ul>
+                </div>
+              }
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleClick}
+              className="border-natural-800 rounded-xs btn text-white w-full h-10 font-sans font-semibold"
+            >
+              + New Note
+            </button>
+          )}
+        </div>
       </div>
-      <div className="flex flex-col">
-        {/* Recents */}
-        <Recent />
 
-        {/* Folders */}
-        <Folders />
+      {/* Recents */}
+      <Recent />
 
-        {/* More */}
-        <More />
-      </div>
+      {/* Folders */}
+      <Folders />
+
+      {/* More */}
+      <More />
     </div>
   );
 };

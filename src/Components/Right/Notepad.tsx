@@ -15,8 +15,8 @@ import useFetchFolder from "../../Hooks/useFetchFolder.tsx";
 
 
 function Notepad() {
-  const { noteId } = useParams();
-  const singleNote = useFetchSingleNote();
+  const { noteId,folderId } = useParams();
+  const {data:singleNoteData, fetchSingleNote,loading,error} = useFetchSingleNote();
   const render = useContext(Rerender);
   const Patch = usePatch();
   const Delete = useDelete();
@@ -33,15 +33,15 @@ function Notepad() {
   const [isChangeFolderVisible, setIsChangeFolderVisible] = useState(false);
 
   useEffect(() => {
-    singleNote.fetchSingleNote();
-  }, [noteId]);
+    fetchSingleNote();
+  }, [noteId,fetchSingleNote]);
 
   useEffect(()=>{
     fetchFolder();
   },[fetchFolder])
 
-  const date = singleNote.data
-    ? new Date(singleNote.data.note.updatedAt).toISOString().split("T")[0]
+  const date = singleNoteData
+    ? new Date(singleNoteData.note.updatedAt).toISOString().split("T")[0]
     : "";
 
   useEffect(() => {
@@ -52,15 +52,15 @@ function Notepad() {
   }, []);
 
   useEffect(() => {
-    if (singleNote.data) {
-      setContent(singleNote.data.note.content);
-      setTitle(singleNote.data.note.title);
+    if (singleNoteData) {
+      setContent(singleNoteData.note.content);
+      setTitle(singleNoteData.note.title);
       // console.log(isArchived)
-      setIsfavorite(singleNote.data.note.isFavorite);
-      setisArchived(singleNote.data.note.isArchived);
+      setIsfavorite(singleNoteData.note.isFavorite);
+      setisArchived(singleNoteData.note.isArchived);
 
     }
-  }, [singleNote.data]);
+  }, [singleNoteData]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
@@ -83,18 +83,20 @@ function Notepad() {
     return () => clearTimeout(timeout);
   }, [content, title]);
 
-  const handleOptionClick = (option: string) => {
-    if(singleNote.data){
+  const handleOptionClick = async (option: string) => {
+    if(singleNoteData){
     switch (option) {
       case "Archived":
         { const updatedArchive = !isArchived;
-        Patch.patchData(`notes/${singleNote?.data.note.id}`, {
+        await Patch.patchData(`notes/${singleNoteData.note.id}`, {
           title,
           content,
           isArchived: updatedArchive,
         }).then(()=>{if(isArchived){
           // console.log("folder should change")
-          navigate(`/folder/${singleNote.data?.note.folderId}/note/${noteId}`)
+          navigate(`/folder/${singleNoteData?.note.folderId}/note/${noteId}`)
+        }else{
+          navigate(`/folder/${folderId}`)
         }});
         setisArchived(updatedArchive);
         render.setrenderRecent((prev: boolean) => !prev);
@@ -104,7 +106,7 @@ function Notepad() {
       case "Favorite":
         {const updatedFavorite = !isFavorite;
         console.log("Fav:" + isFavorite);
-        Patch.patchData(`notes/${singleNote.data.note.id}`, {
+        Patch.patchData(`notes/${singleNoteData.note.id}`, {
           title,
           content,
           isFavorite: updatedFavorite, //added title and content so that these become extra button to save data
@@ -162,9 +164,9 @@ function Notepad() {
 
   }
 
-  if (singleNote.loading) return <h1 className="text-white">Loading...</h1>;
+  if (loading) return <h1 className="text-white">Loading...</h1>;
 
-  if (singleNote.data)
+  if (singleNoteData)
     return (
       <>
         {
@@ -241,7 +243,7 @@ function Notepad() {
                 </div>
                   <div className="text-white"
                     onClick={handleFolderChangeMenu}>
-                    {singleNote.data.note.folder.name}
+                    {singleNoteData.note.folder.name}
                   </div>
                 {
                   (isChangeFolderVisible && folders &&
@@ -283,7 +285,7 @@ function Notepad() {
         }
       </>
     );
-  if (singleNote.error) return <div className="text-white">There is an error.</div>;
+  if (error) return <div className="text-white">There is an error.</div>;
 }
 
 export default Notepad;

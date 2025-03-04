@@ -10,11 +10,13 @@ const App: React.FC = () => {
   const [folderName, setFolderName] = useState("")
 
   return (
-    <Rerender.Provider value={{ renderRecent, setrenderRecent,folderName,setFolderName }}>
-      <div className="flex flex-row max-h-screen">
-        <div className="flex flex-col w-1/5 bg-left">
-          <MainSideBar />
-        </div>
+    <Rerender.Provider
+      value={{ renderRecent, setrenderRecent, folderName, setFolderName }}
+    >
+      <div className="flex flex-row h-screen">
+        <MainSideBar />
+        {/* <div className="flex flex-col w-1/5 ">
+        </div> */}
         <div className="w-1/4 h-screen bg-mid">
           <Mid />
         </div>

@@ -11,60 +11,60 @@ function Recent() {
   const render = useContext(Rerender);
   const [data,setData] = useState(recentData)
 
-useEffect(()=>{
+useEffect(() => {
   fetchRecent();
-  if(error){
-    ()=>toast.error('error while fetching data', 
-    {
-    position: "top-center",
-    autoClose: 5000,
-    hideProgressBar: true,
-    closeOnClick: false,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
+  if (error) {
+    toast.error("Error while fetching data", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
     });
   }
-},[render.renderRecent,error])
+}, [render.renderRecent, error, fetchRecent]);
 
 // console.log(render.renderRecent)
 
-useEffect(()=>{
-  setData(recentData)
-},[recentData])
- 
+useEffect(() => {
+  setData(recentData);
+}, [recentData]);
 
-  if (loading) {
-    return (
-      <div className="py-7.5 h-54">
-        <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
-        <p className="text-white">Loading...</p>
-      </div>
-    );
-  }
+if (loading) {
+  return (
+    <div className="py-7.5 h-54">
+      <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
+      <p className="text-white">Loading...</p>
+    </div>
+  );
+}
 
-  if (error) {
-    return (<>
-    <p className="text-red-500">{error.message}</p>;
-    <ToastContainer
-      position="top-center"
-      autoClose={5000}
-      hideProgressBar
-      newestOnTop={false}
-      closeOnClick={false}
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="light"
+if (error) {
+  return (
+    <>
+      <p className="text-red-500">{error.message}</p>;
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
     </>
-    )
-  }
+  );
+}
 
-  if(data) return (
-    <div className="py-7.5 h-54">
+if (data)
+  return (
+    <div className="py-7.5 h-3/15 overflow-hidden">
       <div className="px-5 font-semibold text-white h-6.5 pb-2">Recents</div>
       {data?.recentNotes?.length > 0 ? (
         <ul>
