@@ -17,7 +17,7 @@ function Mid() {
   const [totalItem, setTotalItem] = useState(NoteData?.total);
   // const midNoteList = [...note.data?.notes];
 
-  const [folderName, setFolderName] = useState<string>("");
+  // const [folderName, setFolderName] = useState<string>("");
   const [url, setUrl] = useState({
     // favorite: undefined as boolean | undefined,
     // archived: false,
@@ -40,19 +40,19 @@ function Mid() {
   useEffect(() => {
     if (folderId) {
       if (folderId === "trash") {
-        setFolderName("Trash");
+        render.setFolderName("Trash");
       } else if (folderId === "favorite") {
-        setFolderName("Favorite");
+        render.setFolderName("Favorite");
       } else if (folderId === "archived") {
-        setFolderName("Archived Notes");
+        render.setFolderName("Archived Notes");
       } else if (folderListData) {
         const id = folderListData.folders.find((i) => i?.id === folderId);
-        setFolderName(id ? id.name : "");
+        render.setFolderName(id ? id.name : "");
       }
     } else {
-      setFolderName("All Files");
+      render.setFolderName("All Files");
     }
-  }, [folderId, folderListData]);
+  }, [folderId, folderListData, render]);
 
   useEffect(() => {
     setUrl({
@@ -117,7 +117,7 @@ function Mid() {
           {/* folder name */}
           <div className="w-75 h-7  border- ">
             <p className="text-white font-sens  font-semibold h-7 text-2xl ">
-              {folderName}
+              {render.folderName}
             </p>
           </div>
 

@@ -113,6 +113,7 @@ function Folders() {
                   >
                     <NavLink
                       to={`/folder/${f.id}`}
+                      onClick={()=>render.setFolderName(f.name)}
                       className={`list w-full ${
                         f.id === folderId ? "activeFolder" : "hover:bg-gray-600"
                       }`}

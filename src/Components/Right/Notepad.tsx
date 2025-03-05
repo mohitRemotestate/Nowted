@@ -17,7 +17,7 @@ import useFetchFolder from "../../Hooks/useFetchFolder.tsx";
 function Notepad() {
   const { noteId,folderId } = useParams();
   const {data:singleNoteData, fetchSingleNote,loading,error} = useFetchSingleNote();
-  const {setrenderRecent} = useContext(Rerender);
+  const {setrenderRecent,folderName} = useContext(Rerender);
   const {patchData} = usePatch();
   const Delete = useDelete();
 
@@ -244,7 +244,7 @@ function Notepad() {
                   <div>Folder</div>
                 </div>
                 <div className="text-white" onClick={handleFolderChangeMenu}>
-                  {singleNoteData.note.folder.name}
+                  {folderName}
                 </div>
                 {/* change folder */}
                 {isChangeFolderVisible && folders && (
