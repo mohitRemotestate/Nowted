@@ -1,44 +1,52 @@
 //toast baki h
-import { useEffect, useState,useContext, useCallback } from "react";
-import menu from '../../assets/notepad-menu.svg';
+import { useEffect, useState, useContext, useCallback } from "react";
+import menu from "../../assets/notepad-menu.svg";
 import calender from "../../assets/calender-icon.svg";
 import ficon from "../../assets/notes-file-icon.svg";
 import { useParams, useNavigate } from "react-router-dom";
 import usePatch from "../../Hooks/usePatch.tsx";
-import favNote from "../../assets/favStarNotepad.svg"
-import delNote from "../../assets/DeleteNotepadIcon.svg"
-import archiveNote from "../../assets/archivedNotepad.svg"
+import favNote from "../../assets/favStarNotepad.svg";
+import delNote from "../../assets/DeleteNotepadIcon.svg";
+import archiveNote from "../../assets/archivedNotepad.svg";
 import useDelete from "../../Hooks/useDelete.tsx";
-import Rerender from '../../Context/Context';
-import useFetchSingleNote from '../../Hooks/useFetchSingleNote.tsx';
+import Rerender from "../../Context/Context";
+import useFetchSingleNote from "../../Hooks/useFetchSingleNote.tsx";
 import useFetchFolder from "../../Hooks/useFetchFolder.tsx";
-
+import { toast } from "react-toastify";
+import { useDebounce } from "../../Hooks/useDebounce.tsx";
 
 function Notepad() {
-  const { noteId,folderId } = useParams();
-  const {data:singleNoteData, fetchSingleNote,loading,error} = useFetchSingleNote();
-  const {setrenderRecent,folderName} = useContext(Rerender);
-  const {patchData} = usePatch();
+  const { noteId, folderId } = useParams();
+  const {
+    data: singleNoteData,
+    fetchSingleNote,
+    loading,
+    error,
+  } = useFetchSingleNote();
+  const { setrenderRecent, folderName } = useContext(Rerender);
+  const { patchData } = usePatch();
   const Delete = useDelete();
 
   //data, loading, error
   const [content, setContent] = useState("");
+  const [saveContent, setSaveContent] = useState<null | string>(null);
   const [title, setTitle] = useState("");
   const [isArchived, setisArchived] = useState(false);
   const [isFavorite, setIsfavorite] = useState(false);
-  const [ popupVisible, setPopupVisible] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const navigate = useNavigate();
-  const {fetchFolder,data:folders} = useFetchFolder();
+  const { fetchFolder, data: folders } = useFetchFolder();
   const [isChangeFolderVisible, setIsChangeFolderVisible] = useState(false);
+  const debounceContent = useDebounce(saveContent, 2000);
 
   useEffect(() => {
     fetchSingleNote();
-  }, [noteId,fetchSingleNote]);
+  }, [noteId, fetchSingleNote]);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchFolder();
-  },[fetchFolder])
+  }, [fetchFolder]);
 
   const date = singleNoteData
     ? new Date(singleNoteData.note.updatedAt).toISOString().split("T")[0]
@@ -58,13 +66,12 @@ function Notepad() {
       // console.log(isArchived)
       setIsfavorite(singleNoteData.note.isFavorite);
       setisArchived(singleNoteData.note.isArchived);
-
     }
   }, [singleNoteData]);
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-  
+
     if (target.closest(".popup-container") || target.closest("#menuIcon")) {
       return;
     }
@@ -76,94 +83,99 @@ function Notepad() {
   };
 
   const handleOptionClick = async (option: string) => {
-    if(singleNoteData){
-    switch (option) {
-      case "Archived":
-        { const updatedArchive = !isArchived;
-        await patchData(`notes/${singleNoteData.note.id}`, {
-          title,
-          content,
-          isArchived: updatedArchive,
-        }).then(()=>{if(isArchived){
-          // console.log("folder should change")
-          navigate(`/folder/${singleNoteData?.note.folderId}/note/${noteId}`)
-        }else{
-          navigate(`/folder/${folderId}`)
-        }});
-        setisArchived(updatedArchive);
-        setrenderRecent((prev: boolean) => !prev);
-        
-        break;
+    if (singleNoteData) {
+      switch (option) {
+        case "Archived": {
+          const updatedArchive = !singleNoteData.note.isArchived;
+          await patchData(`notes/${singleNoteData.note.id}`, {
+            isArchived: updatedArchive,
+          }).then(() => {
+            if (isArchived) {
+              // console.log("folder should change")
+              navigate(
+                `/folder/${singleNoteData?.note.folderId}/note/${noteId}`
+              );
+            } else {
+              navigate(`/folder/${folderId}`);
+            }
+          });
+          setisArchived(updatedArchive);
+          setrenderRecent((prev: boolean) => !prev);
+          break;
         }
-      case "Favorite":
-        {const updatedFavorite = !isFavorite;
-        console.log("Fav:" + isFavorite);
-        patchData(`notes/${singleNoteData.note.id}`, {
-          title,
-          content,
-          isFavorite: updatedFavorite, //added title and content so that these become extra button to save data
-        });
-        setIsfavorite(updatedFavorite);
-        setrenderRecent((prev: boolean) => !prev);
-        break;}
+        case "Favorite": {
+          const updatedFavorite = !isFavorite;
 
-      case "Delete": {
-        {console.log("deleting a note");
-        deleteNoteById();
-        break;
-      }}
-      default:
-        break;
+          try {
+            await patchData(`notes/${singleNoteData.note.id}`, {
+              isFavorite: updatedFavorite, // added title and content so that these become extra button to save data
+            });
+
+            setIsfavorite(updatedFavorite);
+            setrenderRecent((prev: boolean) => !prev);
+            toast.success("favourite changed");
+          } catch (error) {
+            console.error("Error updating favorite status:", error);
+          }
+
+          break;
+        }
+
+        case "Delete": {
+          // console.log("deleting a note");
+          {
+            deleteNoteById();
+            break;
+          }
+        }
+        default:
+          break;
+      }
+      setPopupVisible(false);
     }
-    setPopupVisible(false);
-}
   };
 
   const deleteNoteById = async () => {
-    await Delete.deleteData(`notes/${noteId}`).then(() =>
-    {setrenderRecent(prev=>!prev)
-      navigate(`/folder/trash/note/${noteId}`)}
-    );
+    await Delete.deleteData(`notes/${noteId}`).then(() => {
+      setrenderRecent((prev) => !prev);
+      navigate(`/folder/trash/note/${noteId}`);
+    });
   };
 
-
-  const saveNotepad = useCallback(() => {
-    patchData(`notes/${noteId}`, {
+  const saveNotepad = useCallback(async () => {
+    await patchData(`notes/${noteId}`, {
       title,
       content,
       isArchived,
       isFavorite,
-    })
-      .then(() => {
-        setIsEditable(false);
-        setrenderRecent((prev) => !prev);
-      })
-      .catch((error) => {
-        console.error("Error updating note:", error);
-      });
-  }, [patchData, noteId, title, content, isArchived, isFavorite, setrenderRecent]);
-  
+    });
+    console.log("saved note");
+    setIsEditable(false);
+    toast.success("Note saved successfully");
+  }, [patchData, noteId, title, content, isArchived, isFavorite]);
 
   //DeBouncing funtion
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      saveNotepad();
+    if (debounceContent === null) return;
+    const timeout = setTimeout(async () => {
+      await patchData(`notes/${noteId}`, {
+        content: debounceContent,
+      });
     }, 2000);
     return () => clearTimeout(timeout);
-  }, [content, saveNotepad, title]);
+  }, [debounceContent]);
 
-  function handleFolderChangeMenu(){
+  function handleFolderChangeMenu() {
     // console.log(folders)
-    setIsChangeFolderVisible(prev=>!prev)
+    setIsChangeFolderVisible((prev) => !prev);
   }
 
-  function ChangeFolder(id:string){
+  function ChangeFolder(id: string) {
     // console.log(id)
-    patchData(`notes/${noteId}`,{
+    patchData(`notes/${noteId}`, {
       folderId: id,
-    }).then(()=>navigate(`/folder/${id}/note/${noteId}`))
-    setIsChangeFolderVisible(prev=> !prev)
-
+    }).then(() => navigate(`/folder/${id}/note/${noteId}`));
+    setIsChangeFolderVisible((prev) => !prev);
   }
 
   if (loading) return <h1 className="text-white">Loading...</h1>;
@@ -248,9 +260,7 @@ function Notepad() {
                 </div>
                 {/* change folder */}
                 {isChangeFolderVisible && folders && (
-                  <div
-                    className="folderListContainer absolute h-80 w-70 overflow-auto top-45 left-1/2 transform -translate-x-1/2 bg-black p-2 rounded-md shadow-lg"
-                  >
+                  <div className="folderListContainer absolute h-80 w-70 overflow-auto top-45 left-1/2 transform -translate-x-1/2 bg-black p-2 rounded-md shadow-lg">
                     <ul className="px-2 flex flex-col gap-0.5 border-2 border-white w-full overflow-x-hidden bg-black scrl">
                       {folders.folders
                         .filter((f) => f !== null)
@@ -275,9 +285,13 @@ function Notepad() {
               <textarea
                 id="body"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                  setSaveContent(e.target.value);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "s" && e.ctrlKey) {
+                    console.log("save called from textarea");
                     e.preventDefault();
                     saveNotepad();
                   }

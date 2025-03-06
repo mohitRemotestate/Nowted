@@ -1,14 +1,14 @@
-import  { useEffect, useState,useContext } from 'react';
+import  { useEffect, useState } from 'react';
 import doc from '../../assets/doc-icon.svg';
 import useFetchRecent from "../../Hooks/useFetchRecent";
 import { NavLink, useParams } from 'react-router-dom';
-import Rerender from '../../Context/Context';
+// import Rerender from '../../Context/Context';
 import { ToastContainer, toast } from 'react-toastify';
 
 function Recent() {
   const { noteId } = useParams();
   const {data: recentData,loading,error,fetchRecent} = useFetchRecent();
-  const render = useContext(Rerender);
+  // const render = useContext(Rerender);
   const [data,setData] = useState(recentData)
 
 useEffect(() => {
@@ -16,7 +16,7 @@ useEffect(() => {
   if (error) {
     toast.error("Error while fetching data", {
       position: "top-center",
-      autoClose: 5000,
+      autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: false,
       pauseOnHover: true,
@@ -25,7 +25,7 @@ useEffect(() => {
       theme: "light",
     });
   }
-}, [render.renderRecent, error, fetchRecent]);
+}, [noteId, error, fetchRecent]);
 
 // console.log(render.renderRecent)
 

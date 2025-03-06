@@ -1,25 +1,25 @@
-
-import { useState } from 'react';
-import logo from './assets/logo.svg';
-import searchIcon from './assets/search-icon.svg';
-import srch from './assets/searching.svg';
-import Recent from './Components/Left/Recent.tsx';
-import Folders from './Components/Left/Folder.tsx';
-import More from './Components/Left/More.tsx';
-import './App.css';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { useDebounce } from './Hooks/useDebounce';
-import { useEffect } from 'react';
-import useFetchNote from './Hooks/useFetchNote';
+import { useState } from "react";
+import logo from "./assets/logo.svg";
+import searchIcon from "./assets/search-icon.svg";
+import srch from "./assets/searching.svg";
+import Recent from "./Components/Left/Recent.tsx";
+import Folders from "./Components/Left/Folder.tsx";
+import More from "./Components/Left/More.tsx";
+import "./App.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { useDebounce } from "./Hooks/useDebounce";
+import { useEffect } from "react";
+import useFetchNote from "./Hooks/useFetchNote";
 
 const MainSideBar: React.FC = () => {
   const { folderId } = useParams();
   const [isSearch, setIsSearch] = useState(false);
   const navigate = useNavigate();
-  const [searchRequest, setSearchRequest] = useState('');
-  const {data:fetchSearchListData, fetchNote: fetchSearchListFetchNote} = useFetchNote();
+  const [searchRequest, setSearchRequest] = useState("");
+  const { data: fetchSearchListData, fetchNote: fetchSearchListFetchNote } =
+    useFetchNote();
   const [srchList, setSrchList] = useState(fetchSearchListData);
   const debounce = useDebounce(searchRequest);
   const handleClickOutside = (event: MouseEvent) => {
@@ -39,26 +39,25 @@ const MainSideBar: React.FC = () => {
   }, []);
 
   const handleClick = () => {
-    if (folderId && !['trash', 'favorite', 'archived'].includes(folderId)) {
+    if (folderId && !["trash", "favorite", "archived"].includes(folderId)) {
       navigate(`/folder/${folderId}/note/newnote`);
     } else {
-      toast.warn('Select folder first');
+      toast.warn("Select folder first");
     }
   };
-   
-  useEffect(()=>{
-    if(debounce){
-      fetchSearchListFetchNote({debounce}).then(()=>setSrchList(fetchSearchListData))
-    }
-    else setSrchList(null);
+
+  useEffect(() => {
+    if (debounce) {
+      fetchSearchListFetchNote({ debounce }).then(() =>
+        setSrchList(fetchSearchListData)
+      );
+    } else setSrchList(null);
     // console.log(srchList);
-  },[debounce, fetchSearchListData, fetchSearchListFetchNote])
+  }, [debounce, fetchSearchListData, fetchSearchListFetchNote]);
 
-  useEffect(()=>{
+  useEffect(() => {}, [fetchSearchListData]);
 
-  },[fetchSearchListData])
-
-  const ReadingSearchInput = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const ReadingSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchRequest(e.target.value);
   };
 
@@ -133,4 +132,3 @@ const MainSideBar: React.FC = () => {
 };
 
 export default MainSideBar;
-

@@ -26,7 +26,7 @@ function Folders() {
   // Fetch folders only once when component mounts
   useEffect(() => {
     fetchFolder();
-  }, [fetchFolder, render.renderRecent]);
+  }, [fetchFolder, folderId]);
 
   const changeName = (id: string, name: string) => {
     setFolderName(name);
@@ -67,25 +67,27 @@ function Folders() {
 
   if (folderData)
     return (
-      <div className="flex flex-1 overflow-hidden w-full">
+      <div className="flex flex-1 overflow-hidden w-full h-full">
         <div className="flex flex-col w-full">
           <div className="px-5 pb-2 font-semibold text-white h-1/15 flex flex-row justify-between">
             <p>Folders</p>
-            <img
-              src={folderIcon}
-              alt="Add Folder"
-              className="cursor-pointer"
-              onClick={() => {
-                postData("/folders", { name: "New Folder" })
-                  .then(() => {
-                    toast.success("Folder created");
-                    fetchFolder();
-                  })
-                  .catch(() => toast.error("Error while creating folder"));
-              }}
-            />
+            <button>
+              <img
+                src={folderIcon}
+                alt="Add Folder"
+                className="cursor-pointer"
+                onClick={() => {
+                  postData("/folders", { name: "New Folder" })
+                    .then(() => {
+                      toast.success("Folder created");
+                      fetchFolder();
+                    })
+                    .catch(() => toast.error("Error while creating folder"));
+                }}
+              />
+            </button>
           </div>
-          <ul className="flex flex-col overflow-y-scroll overflow-x-hidden h-14/15 scrl">
+          <ul className="flex flex-1 flex-col overflow-y-auto scrl">
             {folderData?.folders
               ?.filter((f) => f !== null)
               .map((f) =>
@@ -113,7 +115,7 @@ function Folders() {
                   >
                     <NavLink
                       to={`/folder/${f.id}`}
-                      onClick={()=>render.setFolderName(f.name)}
+                      onClick={() => render.setFolderName(f.name)}
                       className={`list w-full ${
                         f.id === folderId ? "activeFolder" : "hover:bg-gray-600"
                       }`}
@@ -122,12 +124,14 @@ function Folders() {
                       <img className="w-5 h-5" src={fc} alt="Folder Icon" />
                       <p className="truncate">{f.name}</p>
                     </NavLink>
-                    <img
-                      src={trash}
-                      className="py-2.5"
-                      alt="delete icon"
-                      onClick={() => deleteFolder(f.id)}
-                    />
+                    <button>
+                      <img
+                        src={trash}
+                        className="py-2.5"
+                        alt="delete icon"
+                        onClick={() => deleteFolder(f.id)}
+                      />
+                    </button>
                   </div>
                 )
               )}

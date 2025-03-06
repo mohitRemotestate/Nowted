@@ -4,17 +4,17 @@ import axios from "axios";
 
 
 
-  interface Folder{
-    createdAt:string,
-    deletedAt: string| null,
-    id: string,
-    name: string,
-    updatedAt:string|null
-  }
+ export interface Folder {
+   createdAt: string;
+   deletedAt: string | null;
+   id: string;
+   name: string;
+   updatedAt: string | null;
+ }
 
-  interface FolderList{
-    folders: Array<Folder | null>,
-  }
+ export interface FolderList {
+   folders: Array<Folder | null>;
+ }
 //   interface ErrorType {
 //     error: string;
 //     message: string;
